@@ -118,7 +118,7 @@ function MapCard({
     <div
       className={
         'w-full h-full border-4 rounded-2xl bg-cover text-center font-extrabold' +
-        ' [text-shadow:-0.3vmin_0_white,_0_0.3vmin_white,0.3vmin_0_white,0_-0.3vmin_white,-0.3vmin_-0.3vmin_white,_-0.3vmin_0.3vmin_white,0.3vmin_-0.3vmin_white,0.3vmin_0.3vmin_white]' +
+        ' [text-shadow:0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white]' +
         ` flex flex-col justify-between py-0.5 ${statusCss}`
       }
       style={{ backgroundImage: cover ? `url(${cover})` : '' }}
