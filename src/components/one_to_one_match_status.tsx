@@ -1,0 +1,168 @@
+import { useMemo } from 'react';
+import { GiLightSabers } from 'react-icons/gi';
+import { MdRestore } from 'react-icons/md';
+import { RiFlag2Fill, RiFlag2Line } from 'react-icons/ri';
+import { SiYelp } from 'react-icons/si';
+import { useQuery } from 'react-query';
+import { BeatsaverMap, getDataUrlFromHash } from '../beatsaver';
+import { OneToOneStatus, useOneToOneStatus } from '../hooks/local_storage_hooks';
+
+export default function OneToOneMatchStatus({
+  mapHash,
+  p1Win,
+  p2Win,
+  goal,
+}: {
+  mapHash?: string;
+  p1Win?: number;
+  p2Win?: number;
+  goal?: number;
+}) {
+  const [local, saveToLocal] = useOneToOneStatus();
+
+  const { data: mapData } = useQuery([getDataUrlFromHash(mapHash ?? '')], {
+    enabled: !!mapHash,
+  });
+
+  const { songName, songAuthorName, coverUrl } = useMemo(() => {
+    const { versions, metadata } = (mapData ?? {}) as BeatsaverMap;
+    const latest = versions?.[versions.length - 1];
+    const { songName, songSubName, songAuthorName } = (metadata ?? {}) as {
+      songName?: string;
+      songSubName?: string;
+      songAuthorName?: string;
+    };
+    return {
+      songName: songName ?? null,
+      songSubName: songSubName ?? null,
+      songAuthorName: songAuthorName ?? null,
+      coverUrl: latest?.coverURL,
+    };
+  }, [mapData]);
+
+  const setPlayer = (index: number) => {
+    const id = prompt('Input scoresaber user id');
+    if (!id) {
+      return;
+    }
+
+    const update = index == 1 ? { player1: id } : { player2: id };
+    saveToLocal({ ...local, ...update } as OneToOneStatus);
+  };
+
+  const { player1, player2, hasPlayer1Retry, hasPlayer2Retry } = local ?? {};
+  return (
+    <div className='mx-[5vmin] flex flex-col justify-end'>
+      <div className='min-h-[180px] h-[15.3vmin] flex flex-row flex-nowrap justify-between mb-[5vmin] '>
+        <Nameplate
+          userId={player1}
+          win={p1Win}
+          goal={goal}
+          onPfpClick={() => {
+            setPlayer(1);
+          }}
+          hasRetry={hasPlayer1Retry}
+          onRetry={() => {
+            saveToLocal({ ...local, hasPlayer1Retry: !local?.hasPlayer1Retry } as OneToOneStatus);
+          }}
+        />
+        <div
+          className={
+            'flex-[1_0_300px] rounded-[2vw] border-black border-4 mx-3 overflow-hidden' +
+            ' text-white flex flex-col items-center justify-center text-[4vmin] font-bold ' +
+            ' relative text-center font-extrabold text-outshadow bg-slate-900'
+          }
+        >
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              className='object-cover absolute top-0 left-0 w-full h-full brightness-75'
+            />
+          ) : (
+            <GiLightSabers className='text-8xl' />
+          )}
+          <div className='absolute w-full h-full flex flex-col justify-center'>
+            {!!(songName || songAuthorName) && <p className='text-4xl'>{songName}</p>}
+            {!!songAuthorName && <p className='text-3xl'>by ${songAuthorName}</p>}
+          </div>
+        </div>
+        <Nameplate
+          userId={player2}
+          win={p2Win}
+          goal={goal}
+          reverse
+          hasRetry={hasPlayer2Retry}
+          onPfpClick={() => {
+            setPlayer(2);
+          }}
+          onRetry={() => {
+            saveToLocal({ ...local, hasPlayer2Retry: !local?.hasPlayer2Retry } as OneToOneStatus);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function Nameplate({
+  userId,
+  win,
+  goal,
+  reverse,
+  hasRetry,
+  onRetry,
+  onPfpClick,
+}: {
+  userId?: string;
+  win?: number;
+  goal?: number;
+  reverse?: boolean;
+  hasRetry?: boolean;
+  onRetry?: () => void;
+  onPfpClick?: () => void;
+}) {
+  const playerQuery = useQuery([`https://new.scoresaber.com/api/player/${userId}/basic`], {
+    enabled: !!userId,
+  });
+  const { playerName } = (playerQuery.data as any)?.playerInfo ?? {};
+
+  return (
+    <div className={`flex-[4] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
+      <img
+        className='h-full aspect-square border-4 border-violet-900 shadow-lg rounded-3xl'
+        src={userId ? `https://cdn.scoresaber.com/avatars/${userId}.jpg` : '/unknown.jpg'}
+        onClick={onPfpClick}
+      />
+      <span className='w-4' />
+      <div className={`flex-[1_1_4rem] h-2/3 flex flex-col ${reverse ? 'items-end' : ''}`}>
+        <div className={'h-1/2 flex ' + (reverse ? 'flex-row-reverse' : 'flex-row')}>
+          <div
+            className={`w-[10rem] clip polygon text-3xl flex items-center px-2 ${
+              !reverse ? 'bg-red-500 b-9 flex-row' : 'bg-blue-500 a-9 flex-row-reverse'
+            }`}
+          >
+            {[...Array(goal ?? 4).keys()].map((index) =>
+              index < (win ?? 0) ? (
+                <RiFlag2Fill className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'} />
+              ) : (
+                <RiFlag2Line className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'} />
+              ),
+            )}
+          </div>
+          <div className='text-white flex items-center justify-center' onClick={onRetry}>
+            {hasRetry ? <MdRestore className='text-5xl' /> : <SiYelp className='text-5xl' />}
+          </div>
+        </div>
+        <div
+          className={`h-2/3 w-full flex items-center px-4 clip polygon ${
+            !reverse ? 'bg-red-300 b-9' : 'bg-blue-300 a-9 flex-row-reverse'
+          }`}
+        >
+          <p className='font-[Maplestory] text-4xl font-extrabold text-white text-outshadow '>
+            {playerName}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

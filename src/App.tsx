@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useLocalStorage } from 'react-use';
 import { BeatsaverMap, getDataUrlFromHash } from './beatsaver';
+import OneToOneMatchStatus from './components/one_to_one_match_status';
+import { MatchMapStatus, useMatchStatus } from './hooks/local_storage_hooks';
 
 export default function App() {
   const [state, setState] = useState({
@@ -10,13 +11,21 @@ export default function App() {
     bottomSubtitle: '',
     titles: [] as string[],
     hashes: [] as string[],
-    matchStatus: [] as (MatchMapStatus | undefined)[],
+    matchStatus: [] as MatchMapStatus[],
   });
-  const [matchStatus, setMatchStatus] = useLocalStorage('matchStatus', [] as MatchMapStatus[]);
+
+  const [matchStatus, saveMatchStatus] = useMatchStatus();
 
   const saveStatus = (status: MatchMapStatus, index: number) => {
+    if (status === 'picked') {
+      for (let i = 0; i < matchStatus!.length; i++) {
+        if (matchStatus![i] === 'picked') {
+          matchStatus![i] = 'normal';
+        }
+      }
+    }
     matchStatus![index] = status;
-    setMatchStatus(matchStatus);
+    saveMatchStatus(matchStatus);
   };
 
   useQuery(['./map_pool.json'], {
@@ -33,39 +42,48 @@ export default function App() {
   });
 
   const { title, topSubtitle, bottomSubtitle, hashes } = state;
-  return (
-    <main className='bg-[url(/bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
-      <div className='flex-[21_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
-        <p className='text-[3.5vmin]'>{topSubtitle}</p>
-        <p className='text-[6.25vmin] leading-[6.25vmin]'>
-          {title || (
-            <>
-              제3회 <span className='text-[#FFC6ED]'>전자칼잽이</span> 대전
-            </>
-          )}
-        </p>
-        <p className='text-[4.25vmin] leading-[5.25vmin]'>{bottomSubtitle}</p>
-      </div>
+  const pickedIndex = matchStatus!.findIndex((x) => x === 'picked');
+  const pickedHash = hashes[pickedIndex];
 
-      <div className='flex-[79_1_0] px-[13vmin]'>
-        <div className='aspect-[2.16] bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-[2vmin]'>
-          {hashes.map((hash, index) => (
-            <div key={hash} className='flex-[1_0] basis-1/3 p-[2vmin] h-1/3'>
-              <MapCard
-                title={state.titles[index]}
-                hash={hash}
-                status={matchStatus?.[index]}
-                onStatusChanged={(status) => saveStatus(status, index)}
-              />
-            </div>
-          ))}
+  return (
+    <main>
+      <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
+        <div className='flex-[21_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
+          <p className='text-4xl mt-7'>{topSubtitle}</p>
+          <p className='text-7xl'>
+            {title || (
+              <>
+                제3회 <span className='text-[#FFC6ED]'>전자칼잽이</span> 대전
+              </>
+            )}
+          </p>
+          <p className='text-5xl'>{bottomSubtitle}</p>
+        </div>
+
+        <div className='flex-[79_1_0] px-[7.5vw]'>
+          <div className='aspect-[2.16] bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-7'>
+            {hashes.map((hash, index) => (
+              <div key={hash} className='flex-[1_0] basis-1/3 p-5 h-1/3'>
+                <MapCard
+                  title={state.titles[index]}
+                  hash={hash}
+                  status={matchStatus?.[index]}
+                  onStatusChanged={(status) => saveStatus(status, index)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+      <OneToOneMatchStatus
+        mapHash={pickedHash}
+        goal={4}
+        p1Win={matchStatus?.filter((x) => x === 'p1_win').length}
+        p2Win={matchStatus?.filter((x) => x === 'p2_win').length}
+      />
     </main>
   );
 }
-
-type MatchMapStatus = 'normal' | 'banned' | 'p1_win' | 'p2_win';
 
 function MapCard({
   title,
@@ -90,6 +108,9 @@ function MapCard({
   switch (status) {
     case 'banned':
       statusCss = 'border-gray-400 text-gray-400';
+      break;
+    case 'picked':
+      statusCss = 'border-yellow-400 text-yellow-500';
       break;
     case 'p1_win':
       statusCss = 'border-red-600 text-red-600';
@@ -116,15 +137,19 @@ function MapCard({
     <div
       className={
         'w-full h-full border-4 rounded-2xl bg-cover text-center font-extrabold' +
-        ' [text-shadow:0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white]' +
-        ` flex flex-col justify-between py-[1vmin] ${statusCss}`
+        ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
+        ` flex flex-col justify-between py-2 ${statusCss}`
       }
       style={{ backgroundImage: cover ? `url(${cover})` : '' }}
       onClick={setStatus}
+      onContextMenu={(ev) => {
+        ev.preventDefault();
+        onStatusChanged?.('picked');
+      }}
     >
-      <p className='text-[3vmin] leading-[3vmin]'>{map?.id ?? '-'}</p>
-      <p className='text-[3.5vmin] leading-[3.5vmin]'>{title ?? map?.metadata?.songName ?? '-'}</p>
-      <p className='text-[2vmin] leading-[2vmin]'>{map?.metadata?.levelAuthorName ?? '-'}</p>
+      <p className='text-2xl'>{map?.id ?? '-'}</p>
+      <p className='text-4xl'>{title ?? map?.metadata?.songName ?? '-'}</p>
+      <p className='text-2xl'>{map?.metadata?.levelAuthorName ?? '-'}</p>
     </div>
   );
 }

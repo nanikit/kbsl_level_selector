@@ -3,5 +3,41 @@
 @tailwind utilities;
 
 body {
-  font-family: Pretendard, NanumGothic, sans-serif;
+  font-family: 'Pretendard Variable', NanumGothic, sans-serif;
+  user-select: none;
+}
+
+@layer utilities {
+  * {
+    --tw-clip-polygon: var(--tw-clip-polygon-a), var(--tw-clip-polygon-b), var(--tw-clip-polygon-c),
+      var(--tw-clip-polygon-d);
+    --tw-clip-polygon-a: 0 0;
+    --tw-clip-polygon-b: 100% 0;
+    --tw-clip-polygon-c: 100% 100%;
+    --tw-clip-polygon-d: 0 100%;
+  }
+
+  .clip.polygon.a-9 {
+    --tw-clip-polygon-a: 2.25rem 0;
+  }
+
+  .clip.polygon.b-9 {
+    --tw-clip-polygon-b: calc(100% - 2.25rem) 0;
+  }
+
+  .clip.polygon.c-9 {
+    --tw-clip-polygon-c: calc(100% - 2.25rem) 100%;
+  }
+
+  .clip.polygon.d-9 {
+    --tw-clip-polygon-d: 2.25rem 100%;
+  }
+
+  .clip.polygon {
+    clip-path: polygon(var(--tw-clip-polygon));
+  }
+
+  .text-outshadow {
+    text-shadow: -1px 1px 3px #000, 1px 1px 3px #000, 1px -1px 0 #000, -1px -1px 0 #000;
+  }
 }
