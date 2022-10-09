@@ -34,7 +34,7 @@ function App() {
 
   const { title, topSubtitle, bottomSubtitle, hashes } = state;
   return (
-    <main className='bg-[url(./bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
+    <main className='bg-[url(/bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
       <div className=' text-white flex flex-col flex-nowrap items-center font-bold pt-2'>
         <p className='text-2xl'>{topSubtitle}</p>
         <p className='text-5xl'>
