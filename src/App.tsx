@@ -22,7 +22,7 @@ function App() {
   };
 
   useAsync(async () => {
-    const playlist = await fetchJson('/public/map_pool.json');
+    const playlist = await fetchJson('/map_pool.json');
     const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
     setState({
       ...state,
@@ -34,7 +34,7 @@ function App() {
 
   const { title, topSubtitle, bottomSubtitle, hashes } = state;
   return (
-    <main className='bg-[url(./public/bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
+    <main className='bg-[url(./bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
       <div className=' text-white flex flex-col flex-nowrap items-center font-bold pt-2'>
         <p className='text-2xl'>{topSubtitle}</p>
         <p className='text-5xl'>
