@@ -106,7 +106,6 @@ function MapCard({
     const { left, top, width, height } = area;
     const isLeft = (x - left) / width < 0.5;
     const isTop = (y - top) / height < 0.5;
-    console.log(ev.clientX, ev.clientY, area);
     if (isTop) {
       onStatusChanged?.(isLeft ? 'normal' : 'banned');
     } else {
