@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useAsync, useLocalStorage } from 'react-use';
 import { getMapFromHash } from './beatsaver';
 
-const beatsaverThrottle = pLimit(5);
+const beatsaverThrottle = pLimit(3);
 
 function App() {
   const [state, setState] = useState({
@@ -35,29 +35,31 @@ function App() {
   const { title, topSubtitle, bottomSubtitle, hashes } = state;
   return (
     <main className='bg-[url(/bg.png)] w-[100vw] h-[100vh] bg-cover flex flex-col'>
-      <div className=' text-white flex flex-col flex-nowrap items-center font-bold pt-2'>
-        <p className='text-2xl'>{topSubtitle}</p>
-        <p className='text-5xl'>
+      <div className='flex-[21_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
+        <p className='text-[3.5vmin]'>{topSubtitle}</p>
+        <p className='text-[6.25vmin] leading-[6.25vmin]'>
           {title || (
             <>
               제3회 <span className='text-[#FFC6ED]'>전자칼잽이</span> 대전
             </>
           )}
         </p>
-        <p className='text-3xl'>{bottomSubtitle}</p>
+        <p className='text-[4.25vmin] leading-[5.25vmin]'>{bottomSubtitle}</p>
       </div>
 
-      <div className='flex-1 m-10 bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-[2vmin]'>
-        {hashes.map((hash, index) => (
-          <div key={hash} className='flex-[1_0] basis-1/3 p-[2vmin] h-1/3'>
-            <MapCard
-              title={state.titles[index]}
-              hash={hash}
-              status={matchStatus?.[index]}
-              onStatusChanged={(status) => saveStatus(status, index)}
-            />
-          </div>
-        ))}
+      <div className='flex-[79_1_0] px-[13vmin]'>
+        <div className='aspect-[2.16] bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-[2vmin]'>
+          {hashes.map((hash, index) => (
+            <div key={hash} className='flex-[1_0] basis-1/3 p-[2vmin] h-1/3'>
+              <MapCard
+                title={state.titles[index]}
+                hash={hash}
+                status={matchStatus?.[index]}
+                onStatusChanged={(status) => saveStatus(status, index)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
@@ -85,7 +87,7 @@ function MapCard({
   }, [hash]);
 
   const map = mapLoading.value;
-  const cover = map?.versions[0]?.coverURL;
+  const cover = map?.versions?.[0]?.coverURL;
 
   let statusCss = 'border-black text-black';
   switch (status) {
@@ -118,14 +120,14 @@ function MapCard({
       className={
         'w-full h-full border-4 rounded-2xl bg-cover text-center font-extrabold' +
         ' [text-shadow:0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white,0_0_0.5vmin_white]' +
-        ` flex flex-col justify-between py-0.5 ${statusCss}`
+        ` flex flex-col justify-between py-[1vmin] ${statusCss}`
       }
       style={{ backgroundImage: cover ? `url(${cover})` : '' }}
       onClick={setStatus}
     >
-      <p className='text-xl'>{map?.id ?? '-'}</p>
-      <p className='text-3xl'>{title ?? map?.metadata?.songName ?? '-'}</p>
-      <p className='text-lg'>{map?.metadata?.levelAuthorName ?? '-'}</p>
+      <p className='text-[3vmin] leading-[3vmin]'>{map?.id ?? '-'}</p>
+      <p className='text-[3.5vmin] leading-[3.5vmin]'>{title ?? map?.metadata?.songName ?? '-'}</p>
+      <p className='text-[2vmin] leading-[2vmin]'>{map?.metadata?.levelAuthorName ?? '-'}</p>
     </div>
   );
 }
