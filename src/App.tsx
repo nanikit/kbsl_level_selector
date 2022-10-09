@@ -22,7 +22,7 @@ function App() {
   };
 
   useAsync(async () => {
-    const playlist = await fetchJson('/map_pool.json');
+    const playlist = await fetchJson('./map_pool.json');
     const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
     setState({
       ...state,
