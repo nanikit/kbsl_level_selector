@@ -1,11 +1,9 @@
-import pLimit from 'p-limit';
 import { useState } from 'react';
-import { useAsync, useLocalStorage } from 'react-use';
-import { getMapFromHash } from './beatsaver';
+import { useQuery } from 'react-query';
+import { useLocalStorage } from 'react-use';
+import { BeatsaverMap, getDataUrlFromHash } from './beatsaver';
 
-const beatsaverThrottle = pLimit(3);
-
-function App() {
+export default function App() {
   const [state, setState] = useState({
     topSubtitle: '한국 비트세이버 커뮤니티',
     title: '',
@@ -21,16 +19,18 @@ function App() {
     setMatchStatus(matchStatus);
   };
 
-  useAsync(async () => {
-    const playlist = await fetchJson('./map_pool.json');
-    const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
-    setState({
-      ...state,
-      bottomSubtitle: playlist?.playlistDescription,
-      titles: playlist?.songs?.map?.((x: any) => x.songName),
-      hashes,
-    });
-  }, []);
+  useQuery(['./map_pool.json'], {
+    onSuccess: (data) => {
+      const playlist = data as any;
+      const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
+      setState({
+        ...state,
+        bottomSubtitle: playlist?.playlistDescription,
+        titles: playlist?.songs?.map?.((x: any) => x.songName),
+        hashes,
+      });
+    },
+  });
 
   const { title, topSubtitle, bottomSubtitle, hashes } = state;
   return (
@@ -78,15 +78,12 @@ function MapCard({
   status?: MatchMapStatus;
   onStatusChanged?: (status: MatchMapStatus) => void;
 }) {
-  const mapLoading = useAsync(async () => {
-    if (!hash) {
-      return;
-    }
+  const { data } = useQuery([getDataUrlFromHash(hash ?? '')], {
+    enabled: !!hash,
+    staleTime: Infinity,
+  });
+  const map = data as BeatsaverMap;
 
-    return beatsaverThrottle(() => getMapFromHash(hash));
-  }, [hash]);
-
-  const map = mapLoading.value;
   const cover = map?.versions?.[0]?.coverURL;
 
   let statusCss = 'border-black text-black';
@@ -131,10 +128,3 @@ function MapCard({
     </div>
   );
 }
-
-async function fetchJson(url: string) {
-  const response = await fetch(url);
-  return response.json();
-}
-
-export default App;

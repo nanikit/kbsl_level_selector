@@ -67,8 +67,10 @@ export type BeatsaverMap = {
   lastPublishedAt: string;
 };
 
+export const getDataUrlFromHash = (hash: string) => `https://beatsaver.com/api/maps/hash/${hash}`;
+
 export const getMapFromHash = async (hash: string): Promise<BeatsaverMap> => {
-  const response = await fetch(`https://beatsaver.com/api/maps/hash/${hash}`);
+  const response = await fetch(getDataUrlFromHash(hash));
   return response.json();
 };
 
