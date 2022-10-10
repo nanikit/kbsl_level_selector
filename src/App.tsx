@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
 import {
   getMatchFromPlaylist,
   MatchMapStatus,
   useMatchInformation,
-  useOneToOneStatus,
 } from './hooks/local_storage_hooks';
 import { BeatsaverMap, getDataUrlFromHash } from './services/beatsaver';
 
@@ -36,14 +34,6 @@ export default function App() {
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
   const pickedHash = hashes[pickedIndex];
 
-  const [oneToOne, saveOneToOne] = useOneToOneStatus();
-
-  useEffect(() => {
-    if (match.matchResult.length === 0) {
-      saveOneToOne({ ...oneToOne, hasPlayer1Retry: true, hasPlayer2Retry: true });
-    }
-  }, [match.title]);
-
   return (
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
@@ -62,7 +52,7 @@ export default function App() {
         <div className='flex-[79_1_0] px-[7.5vw]'>
           <div className='aspect-[2.16] bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-7'>
             {hashes.map((hash, index) => (
-              <div key={hash} className='flex-[1_0] basis-1/3 p-5 h-1/3'>
+              <div key={hash || index} className='flex-[1_0] basis-1/3 p-5 h-1/3'>
                 <MapCard
                   title={match.titles[index]}
                   hash={hash}
@@ -76,7 +66,7 @@ export default function App() {
       </div>
       <OneToOneMatchStatus
         mapHash={pickedHash}
-        goal={4}
+        goal={Math.ceil((hashes.length - matchResult.filter((x) => x === 'banned').length) / 2)}
         p1Win={matchResult?.filter((x) => x === 'p1_win').length}
         p2Win={matchResult?.filter((x) => x === 'p2_win').length}
       />
@@ -137,7 +127,7 @@ function MapCard({
       className={
         'w-full h-full border-4 rounded-2xl bg-cover text-center font-extrabold' +
         ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
-        ` flex flex-col justify-between py-2 ${statusCss}`
+        ` flex flex-col justify-between bg-sky-100 ${statusCss}`
       }
       style={{ backgroundImage: cover ? `url(${cover})` : '' }}
       onClick={setStatus}

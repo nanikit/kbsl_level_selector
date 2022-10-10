@@ -57,7 +57,7 @@ const oneToOneAtom = atomWithLocalStorage('oneToOneStatus', {
 
 export function getMatchFromPlaylist(data: unknown) {
   const playlist = data as any;
-  const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
+  const hashes = playlist?.songs?.map((x: any) => x?.hash);
   const matchUpdate = {
     host: '한국 비트세이버 커뮤니티',
     title: '',

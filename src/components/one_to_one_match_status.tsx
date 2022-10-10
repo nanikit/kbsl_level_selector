@@ -90,7 +90,7 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
       });
       const json = JSON.parse(text);
       const matchUpdate = getMatchFromPlaylist(json);
-      saveMatch({ ...match, ...matchUpdate, matchResult: [] });
+      saveMatch({ ...match, ...matchUpdate });
     },
     [match],
   );
