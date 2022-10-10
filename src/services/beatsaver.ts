@@ -1,3 +1,4 @@
+export type Difficulty = 'Easy' | 'Normal' | 'Hard' | 'Expert' | 'ExpertPlus';
 export type BeatsaverMap = {
   id: string;
   name: string;
@@ -44,7 +45,7 @@ export type BeatsaverMap = {
       nps: number;
       length: number;
       characteristic: string;
-      difficulty: string;
+      difficulty: Difficulty;
       events: number;
       chroma: boolean;
       me: boolean;

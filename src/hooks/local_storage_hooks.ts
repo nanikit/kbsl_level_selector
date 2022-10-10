@@ -1,4 +1,5 @@
 import { atom, useAtom } from 'jotai';
+import { Difficulty } from '../services/beatsaver';
 
 export type OneToOneStatus = {
   player1: string;
@@ -14,8 +15,13 @@ export type MatchInformation = {
   host: string;
   description: string;
   titles: string[];
-  hashes: string[];
+  levels: Level[];
   matchResult: MatchMapStatus[];
+};
+
+type Level = {
+  hash: string;
+  difficulty?: Difficulty;
 };
 
 const atomWithLocalStorage = <T>(key: string, initialValue: T) => {
@@ -44,9 +50,24 @@ const matchInformationAtom = atomWithLocalStorage('match', {
   host: '',
   description: '',
   titles: [],
-  hashes: [],
+  levels: [],
   matchResult: [],
 } as MatchInformation);
+
+function migrateConfiguration() {
+  const json = localStorage.getItem('match');
+  if (json === null) {
+    return;
+  }
+
+  const obj = JSON.parse(json);
+  if (![obj.levels, obj.matchResult, obj.titles].every(Array.isArray)) {
+    debugger;
+    localStorage.removeItem('match');
+  }
+}
+
+migrateConfiguration();
 
 const oneToOneAtom = atomWithLocalStorage('oneToOneStatus', {
   player1: '',
@@ -55,15 +76,18 @@ const oneToOneAtom = atomWithLocalStorage('oneToOneStatus', {
   hasPlayer2Retry: true,
 });
 
-export function getMatchFromPlaylist(data: unknown) {
+export function getMatchFromPlaylist(data: unknown): Partial<MatchInformation> {
   const playlist = data as any;
-  const hashes = playlist?.songs?.map((x: any) => x?.hash);
+  const levels = playlist?.songs?.map((x: any) => ({
+    hash: x.hash,
+    difficulty: x.difficulties?.[0]?.name,
+  }));
   const matchUpdate = {
     host: '한국 비트세이버 커뮤니티',
     title: '',
     description: playlist?.playlistDescription,
     titles: playlist?.songs?.map?.((x: any) => x.songName),
-    hashes,
+    levels,
   };
   return matchUpdate;
 }

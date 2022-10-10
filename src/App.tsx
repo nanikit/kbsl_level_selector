@@ -5,7 +5,7 @@ import {
   MatchMapStatus,
   useMatchInformation,
 } from './hooks/local_storage_hooks';
-import { BeatsaverMap, getDataUrlFromHash } from './services/beatsaver';
+import { BeatsaverMap, Difficulty, getDataUrlFromHash } from './services/beatsaver';
 
 export default function App() {
   const [match, saveMatch] = useMatchInformation();
@@ -30,14 +30,14 @@ export default function App() {
     enabled: !match.host,
   });
 
-  const { title, description, host, hashes, matchResult } = match;
+  const { title, description, host, levels, matchResult } = match;
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
-  const pickedHash = hashes[pickedIndex];
+  const pickedLevel = levels[pickedIndex];
 
   return (
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
-        <div className='flex-[21_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
+        <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
           <p className='text-4xl mt-7'>{host}</p>
           <p className='text-7xl'>
             {title || (
@@ -49,13 +49,14 @@ export default function App() {
           <p className='text-5xl'>{description}</p>
         </div>
 
-        <div className='flex-[79_1_0] px-[7.5vw]'>
-          <div className='aspect-[2.16] bg-green-300 bg-opacity-80 flex flex-row flex-wrap p-7'>
-            {hashes.map((hash, index) => (
-              <div key={hash || index} className='flex-[1_0] basis-1/3 p-5 h-1/3'>
+        <div className='flex-[72_1_0] px-[4vw]'>
+          <div className='aspect-[2.96] flex flex-row flex-wrap'>
+            {levels.map(({ hash, difficulty }, index) => (
+              <div key={hash || index} className='flex-[1_0] basis-1/3 p-[0.5vw] h-1/3'>
                 <MapCard
                   title={match.titles[index]}
                   hash={hash}
+                  difficulty={difficulty}
                   status={matchResult?.[index]}
                   onStatusChanged={(status) => saveStatus(status, index)}
                 />
@@ -65,8 +66,8 @@ export default function App() {
         </div>
       </div>
       <OneToOneMatchStatus
-        mapHash={pickedHash}
-        goal={Math.ceil((hashes.length - matchResult.filter((x) => x === 'banned').length) / 2)}
+        mapHash={pickedLevel?.hash}
+        goal={Math.ceil((levels.length - matchResult.filter((x) => x === 'banned').length) / 2)}
         p1Win={matchResult?.filter((x) => x === 'p1_win').length}
         p2Win={matchResult?.filter((x) => x === 'p2_win').length}
       />
@@ -78,10 +79,12 @@ function MapCard({
   title,
   hash,
   status,
+  difficulty,
   onStatusChanged,
 }: {
   title?: string;
   hash?: string;
+  difficulty?: Difficulty;
   status?: MatchMapStatus;
   onStatusChanged?: (status: MatchMapStatus) => void;
 }) {
@@ -125,9 +128,9 @@ function MapCard({
   return (
     <div
       className={
-        'w-full h-full border-4 rounded-2xl bg-cover text-center font-extrabold' +
+        'relative w-full h-full border-4 rounded-2xl bg-cover font-extrabold' +
         ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
-        ` flex flex-col justify-between bg-sky-100 ${statusCss}`
+        ` flex flex-row overflow-hidden bg-sky-100 ${statusCss}`
       }
       style={{ backgroundImage: cover ? `url(${cover})` : '' }}
       onClick={setStatus}
@@ -136,9 +139,26 @@ function MapCard({
         onStatusChanged?.('picked');
       }}
     >
-      <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
-      <p className='text-[2vw] leading-[2vw]'>{title ?? map?.metadata?.songName ?? '-'}</p>
-      <p className='text-[1.2vw]'>{map?.metadata?.levelAuthorName ?? ''}</p>
+      {!!cover && (
+        <>
+          <img src={cover} className='absolute w-full h-full object-cover' />
+          <img src={cover} className='relative h-full aspect-square object-cover' />
+        </>
+      )}
+      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-md'>
+        <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
+        <p className='text-[2vw] leading-[2vw] inline w-full'>
+          {title ?? map?.metadata?.songName ?? '-'}
+        </p>
+        <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
+          <p className='text-[1.2vw] leading-[1.5vw] mr-1'>
+            {map?.metadata?.levelAuthorName ?? ''}
+          </p>
+          <p className='text-[1.2vw] leading-[1.5vw]'>
+            {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
