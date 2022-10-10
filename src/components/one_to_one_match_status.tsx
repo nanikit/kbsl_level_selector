@@ -44,7 +44,7 @@ export default function OneToOneMatchStatus({
   const { player1, player2, hasPlayer1Retry, hasPlayer2Retry } = local ?? {};
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <div className='min-h-[180px] h-[15.3vmin] flex flex-row flex-nowrap justify-between mb-[5vmin] '>
+      <div className='min-h-[180px] h-[15.3vmin] flex flex-row flex-nowrap justify-between mb-[5vmin]'>
         <Nameplate
           userId={player1}
           win={p1Win}
@@ -111,7 +111,7 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
   return (
     <div
       className={
-        'flex-[1_0_300px] rounded-[2vw] border-black border-4 mx-3 overflow-hidden' +
+        'flex-1 h-full rounded-[2vw] border-black border-[0.2vw] mx-[1vw] overflow-hidden' +
         ' text-white flex flex-col items-center justify-center text-[4vmin] font-bold ' +
         ' relative text-center font-extrabold text-outshadow bg-slate-900'
       }
@@ -125,11 +125,11 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
           className='object-cover absolute top-0 left-0 w-full h-full brightness-75'
         />
       ) : (
-        <GiLightSabers className='text-8xl' />
+        <GiLightSabers className='text-[4vw]' />
       )}
       <div className='absolute w-full h-full flex flex-col justify-center'>
-        {!!(songName || songAuthorName) && <p className='text-4xl'>{songName}</p>}
-        {!!songAuthorName && <p className='text-3xl'>by ${songAuthorName}</p>}
+        {!!(songName || songAuthorName) && <p className='text-[2vw]'>{songName}</p>}
+        {!!songAuthorName && <p className='text-[1vw]'>by ${songAuthorName}</p>}
       </div>
     </div>
   );
@@ -158,9 +158,9 @@ function Nameplate({
   const { playerName } = (playerQuery.data as any)?.playerInfo ?? {};
 
   return (
-    <div className={`flex-[4] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
+    <div className={`flex-[1.7] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
       <img
-        className='h-full aspect-square border-4 border-violet-900 shadow-lg rounded-3xl'
+        className='h-full aspect-square border-[0.15vw] border-violet-900 shadow-xl rounded-[2vw]'
         src={userId ? `https://cdn.scoresaber.com/avatars/${userId}.jpg` : '/unknown.jpg'}
         onClick={onPfpClick}
       />
@@ -168,7 +168,7 @@ function Nameplate({
       <div className={`flex-[1_1_4rem] h-2/3 flex flex-col ${reverse ? 'items-end' : ''}`}>
         <div className={'h-1/2 flex ' + (reverse ? 'flex-row-reverse' : 'flex-row')}>
           <div
-            className={`w-[10rem] clip polygon text-3xl flex items-center px-2 ${
+            className={`w-[10.5vw] clip polygon text-[2vw] flex items-center px-[1vw] ${
               !reverse ? 'bg-red-500 b-9 flex-row' : 'bg-blue-500 a-9 flex-row-reverse'
             }`}
           >
@@ -186,8 +186,8 @@ function Nameplate({
               ),
             )}
           </div>
-          <div className='text-white flex items-center justify-center' onClick={onRetry}>
-            {hasRetry ? <MdRestore className='text-5xl' /> : <SiYelp className='text-5xl' />}
+          <div className='text-white flex items-center justify-center text-[2vw]' onClick={onRetry}>
+            {hasRetry ? <MdRestore /> : <SiYelp />}
           </div>
         </div>
         <div
@@ -195,7 +195,7 @@ function Nameplate({
             !reverse ? 'bg-red-300 b-9' : 'bg-blue-300 a-9 flex-row-reverse'
           }`}
         >
-          <p className='font-[Maplestory] text-4xl font-extrabold text-white text-outshadow '>
+          <p className='font-[Maplestory] text-[2vw] font-extrabold text-white text-outshadow '>
             {playerName}
           </p>
         </div>

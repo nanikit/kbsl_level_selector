@@ -18,19 +18,19 @@ body {
   }
 
   .clip.polygon.a-9 {
-    --tw-clip-polygon-a: 2.25rem 0;
+    --tw-clip-polygon-a: 2.25vw 0;
   }
 
   .clip.polygon.b-9 {
-    --tw-clip-polygon-b: calc(100% - 2.25rem) 0;
+    --tw-clip-polygon-b: calc(100% - 2.25vw) 0;
   }
 
   .clip.polygon.c-9 {
-    --tw-clip-polygon-c: calc(100% - 2.25rem) 100%;
+    --tw-clip-polygon-c: calc(100% - 2.25vw) 100%;
   }
 
   .clip.polygon.d-9 {
-    --tw-clip-polygon-d: 2.25rem 100%;
+    --tw-clip-polygon-d: 2.25vw 100%;
   }
 
   .clip.polygon {
@@ -38,6 +38,7 @@ body {
   }
 
   .text-outshadow {
-    text-shadow: -1px 1px 3px #000, 1px 1px 3px #000, 1px -1px 0 #000, -1px -1px 0 #000;
+    text-shadow: -0.1vw 0.1vw 0.3vw #000, 0.1vw 0.1vw 0.3vw #000, 0.1vw -0.1vw 0 #000,
+      -0.1vw -0.1vw 0 #000;
   }
 }

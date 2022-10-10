@@ -38,15 +38,15 @@ export default function App() {
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
         <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
-          <p className='text-4xl mt-7'>{host}</p>
-          <p className='text-7xl'>
+          <p className='text-[2vw] mt-7'>{host}</p>
+          <p className='text-[3.5vw] leading-[3.5vw]'>
             {title || (
               <>
                 제3회 <span className='text-[#FFC6ED]'>전자칼잽이</span> 대전
               </>
             )}
           </p>
-          <p className='text-5xl'>{description}</p>
+          <p className='text-[2.5vw] leading-[3vw]'>{description}</p>
         </div>
 
         <div className='flex-[72_1_0] px-[4vw]'>
@@ -128,7 +128,7 @@ function MapCard({
   return (
     <div
       className={
-        'relative w-full h-full border-4 rounded-2xl bg-cover font-extrabold' +
+        'relative w-full h-full border-[0.3vw] rounded-[1vw] bg-cover font-extrabold' +
         ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
         ` flex flex-row overflow-hidden bg-sky-100 ${statusCss}`
       }
@@ -145,7 +145,7 @@ function MapCard({
           <img src={cover} className='relative h-full aspect-square object-cover' />
         </>
       )}
-      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-md'>
+      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-[1.5vw]'>
         <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
         <p className='text-[2vw] leading-[2vw] inline w-full'>
           {title ?? map?.metadata?.songName ?? '-'}
