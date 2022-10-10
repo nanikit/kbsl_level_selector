@@ -1,11 +1,17 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
 import { RiFlag2Fill, RiFlag2Line } from 'react-icons/ri';
 import { SiYelp } from 'react-icons/si';
 import { useQuery } from 'react-query';
-import { BeatsaverMap, getDataUrlFromHash } from '../beatsaver';
-import { OneToOneStatus, useOneToOneStatus } from '../hooks/local_storage_hooks';
+import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
+import {
+  getMatchFromPlaylist,
+  OneToOneStatus,
+  useMatchInformation,
+  useOneToOneStatus,
+} from '../hooks/local_storage_hooks';
+import { useDropzone } from 'react-dropzone';
 
 export default function OneToOneMatchStatus({
   mapHash,
@@ -20,25 +26,10 @@ export default function OneToOneMatchStatus({
 }) {
   const [local, saveToLocal] = useOneToOneStatus();
 
-  const { data: mapData } = useQuery([getDataUrlFromHash(mapHash ?? '')], {
+  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? '')], {
     enabled: !!mapHash,
   });
-
-  const { songName, songAuthorName, coverUrl } = useMemo(() => {
-    const { versions, metadata } = (mapData ?? {}) as BeatsaverMap;
-    const latest = versions?.[versions.length - 1];
-    const { songName, songSubName, songAuthorName } = (metadata ?? {}) as {
-      songName?: string;
-      songSubName?: string;
-      songAuthorName?: string;
-    };
-    return {
-      songName: songName ?? null,
-      songSubName: songSubName ?? null,
-      songAuthorName: songAuthorName ?? null,
-      coverUrl: latest?.coverURL,
-    };
-  }, [mapData]);
+  const mapData = mapQuery.data as BeatsaverMap | undefined;
 
   const setPlayer = (index: number) => {
     const id = prompt('Input scoresaber user id');
@@ -66,26 +57,7 @@ export default function OneToOneMatchStatus({
             saveToLocal({ ...local, hasPlayer1Retry: !local?.hasPlayer1Retry } as OneToOneStatus);
           }}
         />
-        <div
-          className={
-            'flex-[1_0_300px] rounded-[2vw] border-black border-4 mx-3 overflow-hidden' +
-            ' text-white flex flex-col items-center justify-center text-[4vmin] font-bold ' +
-            ' relative text-center font-extrabold text-outshadow bg-slate-900'
-          }
-        >
-          {coverUrl ? (
-            <img
-              src={coverUrl}
-              className='object-cover absolute top-0 left-0 w-full h-full brightness-75'
-            />
-          ) : (
-            <GiLightSabers className='text-8xl' />
-          )}
-          <div className='absolute w-full h-full flex flex-col justify-center'>
-            {!!(songName || songAuthorName) && <p className='text-4xl'>{songName}</p>}
-            {!!songAuthorName && <p className='text-3xl'>by ${songAuthorName}</p>}
-          </div>
-        </div>
+        <CurrentMapCard mapData={mapData} />
         <Nameplate
           userId={player2}
           win={p2Win}
@@ -99,6 +71,65 @@ export default function OneToOneMatchStatus({
             saveToLocal({ ...local, hasPlayer2Retry: !local?.hasPlayer2Retry } as OneToOneStatus);
           }}
         />
+      </div>
+    </div>
+  );
+}
+
+function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
+  const [match, saveMatch] = useMatchInformation();
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const reader = new FileReader();
+      const text = await new Promise<string>((resolve, reject) => {
+        reader.onabort = reject;
+        reader.onerror = reject;
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsText(acceptedFiles[0]);
+      });
+      const json = JSON.parse(text);
+      const matchUpdate = getMatchFromPlaylist(json);
+      saveMatch({ ...match, ...matchUpdate, matchResult: [] });
+    },
+    [match],
+  );
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: { 'application/json': ['.json', '.bplist'] },
+  });
+
+  const { versions, metadata } = (mapData ?? {}) as BeatsaverMap;
+  const latest = versions?.[versions.length - 1];
+  const { songName, songAuthorName } = (metadata ?? {}) as {
+    songName?: string;
+    songAuthorName?: string;
+  };
+  const coverUrl = latest?.coverURL;
+
+  return (
+    <div
+      className={
+        'flex-[1_0_300px] rounded-[2vw] border-black border-4 mx-3 overflow-hidden' +
+        ' text-white flex flex-col items-center justify-center text-[4vmin] font-bold ' +
+        ' relative text-center font-extrabold text-outshadow bg-slate-900'
+      }
+      {...getRootProps()}
+    >
+      <input {...getInputProps()} />
+
+      {coverUrl ? (
+        <img
+          src={coverUrl}
+          className='object-cover absolute top-0 left-0 w-full h-full brightness-75'
+        />
+      ) : (
+        <GiLightSabers className='text-8xl' />
+      )}
+      <div className='absolute w-full h-full flex flex-col justify-center'>
+        {!!(songName || songAuthorName) && <p className='text-4xl'>{songName}</p>}
+        {!!songAuthorName && <p className='text-3xl'>by ${songAuthorName}</p>}
       </div>
     </div>
   );
@@ -143,9 +174,15 @@ function Nameplate({
           >
             {[...Array(goal ?? 4).keys()].map((index) =>
               index < (win ?? 0) ? (
-                <RiFlag2Fill className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'} />
+                <RiFlag2Fill
+                  key={index}
+                  className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'}
+                />
               ) : (
-                <RiFlag2Line className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'} />
+                <RiFlag2Line
+                  key={index}
+                  className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'}
+                />
               ),
             )}
           </div>

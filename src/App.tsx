@@ -1,55 +1,54 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
-import { BeatsaverMap, getDataUrlFromHash } from './beatsaver';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
-import { MatchMapStatus, useMatchStatus } from './hooks/local_storage_hooks';
+import {
+  getMatchFromPlaylist,
+  MatchMapStatus,
+  useMatchInformation,
+  useOneToOneStatus,
+} from './hooks/local_storage_hooks';
+import { BeatsaverMap, getDataUrlFromHash } from './services/beatsaver';
 
 export default function App() {
-  const [state, setState] = useState({
-    topSubtitle: '한국 비트세이버 커뮤니티',
-    title: '',
-    bottomSubtitle: '',
-    titles: [] as string[],
-    hashes: [] as string[],
-    matchStatus: [] as MatchMapStatus[],
-  });
-
-  const [matchStatus, saveMatchStatus] = useMatchStatus();
+  const [match, saveMatch] = useMatchInformation();
 
   const saveStatus = (status: MatchMapStatus, index: number) => {
+    const matchResult = match.matchResult ?? [];
     if (status === 'picked') {
-      for (let i = 0; i < matchStatus!.length; i++) {
-        if (matchStatus![i] === 'picked') {
-          matchStatus![i] = 'normal';
+      for (let i = 0; i < matchResult.length; i++) {
+        if (matchResult[i] === 'picked') {
+          matchResult[i] = 'normal';
         }
       }
     }
-    matchStatus![index] = status;
-    saveMatchStatus(matchStatus);
+    matchResult[index] = status;
+    saveMatch({ ...match, matchResult });
   };
 
   useQuery(['./map_pool.json'], {
     onSuccess: (data) => {
-      const playlist = data as any;
-      const hashes = playlist?.songs?.map((x: any) => x?.hash).filter(Boolean);
-      setState({
-        ...state,
-        bottomSubtitle: playlist?.playlistDescription,
-        titles: playlist?.songs?.map?.((x: any) => x.songName),
-        hashes,
-      });
+      saveMatch({ ...match, ...getMatchFromPlaylist(data) });
     },
+    enabled: !match.host,
   });
 
-  const { title, topSubtitle, bottomSubtitle, hashes } = state;
-  const pickedIndex = matchStatus!.findIndex((x) => x === 'picked');
+  const { title, description, host, hashes, matchResult } = match;
+  const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
   const pickedHash = hashes[pickedIndex];
+
+  const [oneToOne, saveOneToOne] = useOneToOneStatus();
+
+  useEffect(() => {
+    if (match.matchResult.length === 0) {
+      saveOneToOne({ ...oneToOne, hasPlayer1Retry: true, hasPlayer2Retry: true });
+    }
+  }, [match.title]);
 
   return (
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
         <div className='flex-[21_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
-          <p className='text-4xl mt-7'>{topSubtitle}</p>
+          <p className='text-4xl mt-7'>{host}</p>
           <p className='text-7xl'>
             {title || (
               <>
@@ -57,7 +56,7 @@ export default function App() {
               </>
             )}
           </p>
-          <p className='text-5xl'>{bottomSubtitle}</p>
+          <p className='text-5xl'>{description}</p>
         </div>
 
         <div className='flex-[79_1_0] px-[7.5vw]'>
@@ -65,9 +64,9 @@ export default function App() {
             {hashes.map((hash, index) => (
               <div key={hash} className='flex-[1_0] basis-1/3 p-5 h-1/3'>
                 <MapCard
-                  title={state.titles[index]}
+                  title={match.titles[index]}
                   hash={hash}
-                  status={matchStatus?.[index]}
+                  status={matchResult?.[index]}
                   onStatusChanged={(status) => saveStatus(status, index)}
                 />
               </div>
@@ -78,8 +77,8 @@ export default function App() {
       <OneToOneMatchStatus
         mapHash={pickedHash}
         goal={4}
-        p1Win={matchStatus?.filter((x) => x === 'p1_win').length}
-        p2Win={matchStatus?.filter((x) => x === 'p2_win').length}
+        p1Win={matchResult?.filter((x) => x === 'p1_win').length}
+        p2Win={matchResult?.filter((x) => x === 'p2_win').length}
       />
     </main>
   );
