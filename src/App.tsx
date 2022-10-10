@@ -136,9 +136,9 @@ function MapCard({
         onStatusChanged?.('picked');
       }}
     >
-      <p className='text-2xl'>{map?.id ?? '-'}</p>
-      <p className='text-4xl'>{title ?? map?.metadata?.songName ?? '-'}</p>
-      <p className='text-2xl'>{map?.metadata?.levelAuthorName ?? '-'}</p>
+      <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
+      <p className='text-[2vw] leading-[2vw]'>{title ?? map?.metadata?.songName ?? '-'}</p>
+      <p className='text-[1.2vw]'>{map?.metadata?.levelAuthorName ?? ''}</p>
     </div>
   );
 }
