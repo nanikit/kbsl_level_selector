@@ -44,7 +44,7 @@ export default function OneToOneMatchStatus({
   const { player1, player2, hasPlayer1Retry, hasPlayer2Retry } = local ?? {};
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <div className='min-h-[180px] h-[15.3vmin] flex flex-row flex-nowrap justify-between mb-[5vmin]'>
+      <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between mb-[5vmin]'>
         <Nameplate
           userId={player1}
           win={p1Win}
@@ -127,9 +127,9 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
       ) : (
         <GiLightSabers className='text-[4vw]' />
       )}
-      <div className='absolute w-full h-full flex flex-col justify-center'>
+      <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
         {!!(songName || songAuthorName) && <p className='text-[2vw]'>{songName}</p>}
-        {!!songAuthorName && <p className='text-[1vw]'>by ${songAuthorName}</p>}
+        {!!songAuthorName && <p className='text-[1vw] font-light'>by ${songAuthorName}</p>}
       </div>
     </div>
   );

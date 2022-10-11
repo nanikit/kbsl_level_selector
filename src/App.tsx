@@ -37,9 +37,9 @@ export default function App() {
   return (
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
-        <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center font-bold pt-2 text-white'>
+        <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center font-[esamanru,"Pretendard_Variable"] pt-2 text-white'>
           <p className='text-[2vw] mt-7'>{host}</p>
-          <p className='text-[3.5vw] leading-[3.5vw]'>
+          <p className='text-[3.5vw] leading-[3.5vw] font-bold'>
             {title || (
               <>
                 제3회 <span className='text-[#FFC6ED]'>전자칼잽이</span> 대전
@@ -145,9 +145,9 @@ function MapCard({
           <img src={cover} className='relative h-full aspect-square object-cover' />
         </>
       )}
-      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-[1.5vw]'>
+      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-[1.5vw] font-[esamanru,"Pretendard_Variable"]'>
         <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
-        <p className='text-[2vw] leading-[2vw] inline w-full'>
+        <p className='text-[2vw] leading-[2.2vw] inline w-full font-light'>
           {title ?? map?.metadata?.songName ?? '-'}
         </p>
         <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
