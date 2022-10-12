@@ -6,6 +6,7 @@ export type OneToOneStatus = {
   player2: string;
   hasPlayer1Retry: boolean;
   hasPlayer2Retry: boolean;
+  tournamentServer: string;
 };
 
 export type MatchMapStatus = 'normal' | 'banned' | 'picked' | 'p1_win' | 'p2_win';
@@ -74,6 +75,7 @@ const oneToOneAtom = atomWithLocalStorage('oneToOneStatus', {
   player2: '',
   hasPlayer1Retry: true,
   hasPlayer2Retry: true,
+  tournamentServer: '',
 });
 
 export function getMatchFromPlaylist(data: unknown): Partial<MatchInformation> {
