@@ -7,7 +7,7 @@ import {
 } from './hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty, getDataUrlFromHash } from './services/beatsaver';
 
-export default function App() {
+export function App() {
   const [match, saveMatch] = useMatchInformation();
 
   const saveStatus = (status: MatchMapStatus, index: number) => {
