@@ -1,0 +1,32 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "(?!)",
+          "endsPattern": "ready in"
+        },
+        "pattern": {
+          "regexp": "(?!)",
+          "file": 0,
+          "line": 1
+        }
+      },
+      "label": "npm: dev",
+      "detail": "vite"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build",
+      "detail": "tsc && vite build"
+    }
+  ]
+}
