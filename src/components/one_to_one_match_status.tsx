@@ -82,19 +82,30 @@ export default function OneToOneMatchStatus({
 function RealtimeScore(search: TournamentSearch) {
   const [session] = useTournamentAssistant(search);
   const { player1Score: player1, player2Score: player2 } = session;
+  const hasScoreBoth = player1?.accuracy != null && player2?.accuracy != null;
+  const isPlayer1Super = hasScoreBoth && player1.accuracy! >= player2.accuracy!;
+  const isPlayer2Super = hasScoreBoth && player1.accuracy! <= player2.accuracy!;
 
   return (
     <div className='h-[6vw] pb-[1.3vw] flex flex-row flex-nowrap items-end justify-center font-[esamanru] text-white text-outshadow'>
       <div className='flex flex-col items-end'>
         <p className='text-[1.5vw] leading-[1.5vw] w-[2vw]'>{isFullCombo(player1) ? 'FC' : ''}</p>
-        <p className='text-[3vw] leading-[3vw] w-[10vw] font-[Consolas] text-right'>
+        <p
+          className={`leading-[3vw] w-[15vw] font-[Consolas] text-right transition-all ${
+            isPlayer1Super ? 'text-[4vw]' : 'text-[3vw]'
+          }`}
+        >
           {player1?.accuracy ? `${(player1.accuracy * 100).toFixed(2)}%` : ''}
         </p>
       </div>
       <span className='w-[1vw]' />
       <div className='flex flex-col items-start'>
         <p className='text-[1.5vw] leading-[1.5vw] w-[2vw]'>{isFullCombo(player2) ? 'FC' : ''}</p>
-        <p className='text-[3vw] leading-[3vw] w-[10vw] font-[Consolas] text-right'>
+        <p
+          className={`leading-[3vw] w-[15vw] font-[Consolas] transition-all ${
+            isPlayer2Super ? 'text-[4vw]' : 'text-[3vw]'
+          }`}
+        >
           {player2?.accuracy ? `${(player2.accuracy * 100).toFixed(2)}%` : ''}
         </p>
       </div>
