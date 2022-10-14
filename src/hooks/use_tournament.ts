@@ -21,9 +21,8 @@ export type SessionState = {
 };
 
 export function useTournamentAssistant(search: TournamentSearch) {
-  const { sendMessage, getWebSocket } = useWebSocket(search.server ?? null, {
+  const { sendMessage } = useWebSocket(search.server ?? null, {
     onOpen: () => {
-      console.log('open');
       sendMessage(
         Packet.encode({
           request: {
@@ -49,17 +48,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
     shouldReconnect: () => true,
   });
 
-  const [session, dispatch] = useReducer((state: SessionState, message: Packet | 'swap') => {
-    if (message === 'swap') {
-      return {
-        ...state,
-        player1: state.player2,
-        player1Score: state.player2Score,
-        player2: state.player1,
-        player2Score: state.player2Score,
-      };
-    }
-
+  const [session, dispatch] = useReducer((state: SessionState, message: Packet) => {
     const newState = collectMessage(message, { search, state, sendMessage });
     return newState;
   }, {});

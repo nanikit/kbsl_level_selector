@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
@@ -11,8 +11,9 @@ import {
   useMatchInformation,
   useOneToOneStatus,
 } from '../hooks/local_storage_hooks';
-import { TournamentSearch, useTournamentAssistant } from '../hooks/use_tournament';
+import { SessionState, useTournamentAssistant } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
+import { Match, User } from '../services/protos/models';
 import { Push_RealtimeScore } from '../services/protos/packets';
 
 export default function OneToOneMatchStatus({
@@ -27,15 +28,23 @@ export default function OneToOneMatchStatus({
   goal?: number;
 }) {
   const [local, saveToLocal] = useOneToOneStatus();
+  const { player1, player2, hasPlayer1Retry, hasPlayer2Retry, tournamentServer } = local ?? {};
+  const [state, setState] = useState({ server: tournamentServer as string | undefined });
 
-  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? '')], {
-    enabled: !!mapHash,
+  const [session] = useTournamentAssistant({ player1, player2, server: state.server });
+
+  const match = pickCurrentMatch(session);
+  const tournamentMapHash = match?.selectedLevel?.levelId?.replace('custom_level_', '');
+  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? tournamentMapHash ?? '')], {
+    enabled: !!(mapHash ?? tournamentMapHash),
   });
+
   const mapData = mapQuery.data as BeatsaverMap | undefined;
 
   const setPlayer = (index: number) => {
-    const id = prompt('Input scoresaber user id');
-    if (!id) {
+    const existing = index === 1 ? player1 : player2;
+    const id = prompt('Input scoresaber user id', existing);
+    if (id == null) {
       return;
     }
 
@@ -43,10 +52,14 @@ export default function OneToOneMatchStatus({
     saveToLocal({ ...local, ...update } as OneToOneStatus);
   };
 
-  const { player1, player2, hasPlayer1Retry, hasPlayer2Retry, tournamentServer } = local ?? {};
+  useEffect(() => {
+    setState({ server: undefined });
+    setState({ server: tournamentServer });
+  }, [player1, player2, tournamentServer]);
+
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <RealtimeScore player1={player1} player2={player2} server={tournamentServer} />
+      <RealtimeScore {...session} />
       <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between'>
         <Nameplate
           userId={player1}
@@ -79,8 +92,31 @@ export default function OneToOneMatchStatus({
   );
 }
 
-function RealtimeScore(search: TournamentSearch) {
-  const [session] = useTournamentAssistant(search);
+function pickCurrentMatch(session: SessionState) {
+  const { player1, player2 } = session;
+  if (!player1 || !player2) {
+    return;
+  }
+
+  const relatedMatches = session.matches
+    ?.filter((x) => hasPlayer(x, player1) && hasPlayer(x, player2))
+    .sort(
+      (a, b) =>
+        new Date(b.startTime || '1990-01-01').getTime() -
+        new Date(a.startTime || '1990-01-01').getTime(),
+    );
+  return relatedMatches?.[0];
+}
+
+function hasPlayer(match: Match, player: User) {
+  const { guid } = player;
+  if (!guid) {
+    return false;
+  }
+  return match.associatedUsers?.includes(guid);
+}
+
+function RealtimeScore(session: SessionState) {
   const { player1Score: player1, player2Score: player2 } = session;
   const hasScoreBoth = player1?.accuracy != null && player2?.accuracy != null;
   const isPlayer1Super = hasScoreBoth && player1.accuracy! >= player2.accuracy!;
