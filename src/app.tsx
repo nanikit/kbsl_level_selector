@@ -178,7 +178,7 @@ function MapCard({
             {title ?? map?.metadata?.songName ?? '-'}
           </p>
           <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
-            <p className='text-[1.2vw] leading-[1.5vw] mr-1'>
+            <p className='text-[1.2vw] leading-[1.5vw] mr-[0.5vw]'>
               {map?.metadata?.levelAuthorName ?? ''}
             </p>
             <p className='text-[1.2vw] leading-[1.5vw]'>
