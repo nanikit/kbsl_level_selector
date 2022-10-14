@@ -18,6 +18,7 @@ export type MatchInformation = {
   titles: string[];
   levels: Level[];
   matchResult: MatchMapStatus[];
+  lastCursorIndex?: number;
 };
 
 type Level = {

@@ -20,7 +20,7 @@ export function App() {
       }
     }
     matchResult[index] = status;
-    saveMatch({ ...match, matchResult });
+    saveMatch({ ...match, lastCursorIndex: index, matchResult });
   };
 
   useQuery(['./map_pool.json'], {
@@ -30,7 +30,7 @@ export function App() {
     enabled: !match.host,
   });
 
-  const { title, description, host, levels, matchResult } = match;
+  const { title, description, host, levels, matchResult, lastCursorIndex } = match;
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
   const pickedLevel = levels[pickedIndex];
 
@@ -52,12 +52,13 @@ export function App() {
         <div className='flex-[72_1_0] px-[4vw]'>
           <div className='aspect-[2.96] flex flex-row flex-wrap'>
             {levels.map(({ hash, difficulty }, index) => (
-              <div key={hash || index} className='flex-[1_0] basis-1/3 p-[0.5vw] h-1/3'>
+              <div key={hash || index} className='flex-[1_0] basis-1/3 w-full h-1/3 p-[0.5vw]'>
                 <MapCard
                   title={match.titles[index]}
                   hash={hash}
                   difficulty={difficulty}
                   status={matchResult?.[index]}
+                  highlight={lastCursorIndex === index}
                   onStatusChanged={(status) => saveStatus(status, index)}
                 />
               </div>
@@ -80,12 +81,14 @@ function MapCard({
   hash,
   status,
   difficulty,
+  highlight,
   onStatusChanged,
 }: {
   title?: string;
   hash?: string;
   difficulty?: Difficulty;
   status?: MatchMapStatus;
+  highlight?: boolean;
   onStatusChanged?: (status: MatchMapStatus) => void;
 }) {
   const { data } = useQuery([getDataUrlFromHash(hash ?? '')], {
@@ -99,16 +102,39 @@ function MapCard({
   let statusCss = 'border-black text-black';
   switch (status) {
     case 'banned':
-      statusCss = 'border-gray-400 text-gray-400';
+      statusCss = `${
+        highlight ? 'cone [--cone-color1:blue] [--cone-color2:cyan]' : 'bg-gray-400'
+      } text-gray-400`;
+      statusCss = `${
+        highlight
+          ? 'cone-glow [--cone-color1:hsl(0,0%,30%)] [--cone-color2:hsl(0,0%,70%)]'
+          : 'bg-gray-400'
+      } text-gray-400`;
       break;
     case 'picked':
-      statusCss = 'border-yellow-400 text-yellow-500';
+      statusCss = `${
+        highlight
+          ? 'cone-glow [--cone-color1:hsl(50,100%,30%)] [--cone-color2:hsl(60,100%,50%)]'
+          : 'bg-yellow-400'
+      } text-yellow-500`;
       break;
     case 'p1_win':
       statusCss = 'border-red-600 text-red-600';
+      statusCss = `${
+        highlight
+          ? 'cone-glow [--cone-color1:hsl(0,100%,40%)] [--cone-color2:hsl(320,100%,70%)]'
+          : 'bg-red-600'
+      } text-red-600`;
       break;
     case 'p2_win':
-      statusCss = 'border-blue-600 text-blue-600';
+      statusCss = `${
+        highlight
+          ? 'cone-glow [--cone-color1:hsl(240,100%,40%)] [--cone-color2:hsl(200,100%,70%)]'
+          : 'bg-blue-600'
+      } text-blue-600`;
+      break;
+    default:
+      statusCss = 'bg-black';
       break;
   }
 
@@ -126,37 +152,39 @@ function MapCard({
   };
 
   return (
-    <div
-      className={
-        'relative w-full h-full border-[0.3vw] rounded-[1vw] bg-cover font-extrabold' +
-        ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
-        ` flex flex-row overflow-hidden bg-sky-100 ${statusCss}`
-      }
-      style={{ backgroundImage: cover ? `url(${cover})` : '' }}
-      onClick={setStatus}
-      onContextMenu={(ev) => {
-        ev.preventDefault();
-        onStatusChanged?.('picked');
-      }}
-    >
-      {!!cover && (
-        <>
-          <img src={cover} className='absolute w-full h-full object-cover' />
-          <img src={cover} className='relative h-full aspect-square object-cover' />
-        </>
-      )}
-      <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start backdrop-blur-[1.5vw] font-[esamanru,"Pretendard_Variable"]'>
-        <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
-        <p className='text-[2vw] leading-[2.2vw] inline w-full font-light'>
-          {title ?? map?.metadata?.songName ?? '-'}
-        </p>
-        <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
-          <p className='text-[1.2vw] leading-[1.5vw] mr-1'>
-            {map?.metadata?.levelAuthorName ?? ''}
+    <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>
+      <div
+        className={
+          'relative w-full h-full rounded-[1vw] bg-cover font-extrabold z-10' +
+          ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
+          ` flex flex-row overflow-hidden bg-sky-100`
+        }
+        style={{ backgroundImage: cover ? `url(${cover})` : '' }}
+        onClick={setStatus}
+        onContextMenu={(ev) => {
+          ev.preventDefault();
+          onStatusChanged?.('picked');
+        }}
+      >
+        {!!cover && (
+          <>
+            <img src={cover} className='absolute w-full h-full object-cover scale-150 blur-[1vw]' />
+            <img src={cover} className='relative h-full aspect-square object-cover' />
+          </>
+        )}
+        <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
+          <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
+          <p className='text-[2vw] leading-[2.2vw] inline w-full font-light'>
+            {title ?? map?.metadata?.songName ?? '-'}
           </p>
-          <p className='text-[1.2vw] leading-[1.5vw]'>
-            {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
-          </p>
+          <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
+            <p className='text-[1.2vw] leading-[1.5vw] mr-1'>
+              {map?.metadata?.levelAuthorName ?? ''}
+            </p>
+            <p className='text-[1.2vw] leading-[1.5vw]'>
+              {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
+            </p>
+          </div>
         </div>
       </div>
     </div>

@@ -41,4 +41,37 @@ body {
     text-shadow: -0.1vw 0.1vw 0.3vw #000, 0.1vw 0.1vw 0.3vw #000, 0.1vw -0.1vw 0 #000,
       -0.1vw -0.1vw 0 #000;
   }
+
+  :root {
+    --cone-color1: hsl(90, 100%, 30%);
+    --cone-color2: hsl(90, 100%, 70%);
+  }
+
+  .cone-glow {
+    position: relative;
+  }
+
+  .cone-glow:before {
+    content: '';
+    position: absolute;
+    left: -50%;
+    top: -25vw;
+    background: repeating-conic-gradient(
+      var(--cone-color1) 0%,
+      var(--cone-color2) 25%,
+      var(--cone-color1) 50%
+    );
+    aspect-ratio: 1;
+    width: 200%;
+    animation: cone-rotate 1.5s linear infinite forwards;
+  }
+
+  @keyframes cone-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(180deg);
+    }
+  }
 }
