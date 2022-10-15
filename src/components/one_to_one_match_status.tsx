@@ -224,7 +224,7 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
       )}
       <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
         {!!(songName || songAuthorName) && <p className='text-[2vw]'>{songName}</p>}
-        {!!songAuthorName && <p className='text-[1vw] font-light'>by ${songAuthorName}</p>}
+        {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
       </div>
     </div>
   );
