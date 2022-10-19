@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
@@ -116,12 +116,59 @@ function hasPlayer(match: Match, player: User) {
   return match.associatedUsers?.includes(guid);
 }
 
-function RealtimeScore(session: SessionState) {
-  const { player1Score: player1, player2Score: player2 } = session;
-  const hasScoreBoth = player1?.accuracy != null && player2?.accuracy != null;
-  const isPlayer1Super = hasScoreBoth && player1.accuracy! >= player2.accuracy!;
-  const isPlayer2Super = hasScoreBoth && player1.accuracy! <= player2.accuracy!;
+function timeout(milliseconds: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
+  });
+}
 
+function RealtimeScore(session: SessionState) {
+  const { player1Score: player1Edge, player2Score: player2Edge } = session;
+  const player1Delay = session.player1?.streamDelayMs;
+  const player2Delay = session.player2?.streamDelayMs;
+
+  type ScoreState = {
+    player1?: Push_RealtimeScore;
+    player2?: Push_RealtimeScore;
+  };
+  const [state, collect] = useReducer(
+    (state: ScoreState, message: ScoreState) => {
+      return { ...state, ...message };
+    },
+    { player1: undefined, player2: undefined },
+  );
+
+  const waitDelay = async (streamDelay?: number) => {
+    let delay = Math.max(0, Math.min(15000, (streamDelay ?? 0) - 200));
+    const seemsNotStreamer = delay > 10000;
+    if (seemsNotStreamer) {
+      delay -= 5000;
+    }
+    if (delay) {
+      await timeout(delay);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      await waitDelay(player1Delay);
+      collect({ player1: player1Edge });
+    })();
+  }, [player1Edge, player1Delay]);
+
+  useEffect(() => {
+    (async () => {
+      await waitDelay(player2Delay);
+      collect({ player2: player2Edge });
+    })();
+  }, [player2Edge, player2Delay]);
+
+  const { player1, player2 } = state;
+  const accuracy1 = player1?.accuracy;
+  const accuracy2 = player2?.accuracy;
+  const hasScoreBoth = accuracy1 !== undefined && accuracy2 !== undefined;
+  const isPlayer1Super = hasScoreBoth && accuracy1 >= accuracy2;
+  const isPlayer2Super = hasScoreBoth && accuracy1 <= accuracy2;
   return (
     <div className='h-[6vw] pb-[1.3vw] flex flex-row flex-nowrap items-end justify-center font-[esamanru] text-white text-outshadow'>
       <div className='flex flex-col items-end'>
@@ -131,7 +178,7 @@ function RealtimeScore(session: SessionState) {
             isPlayer1Super ? 'text-[4vw]' : 'text-[3vw]'
           }`}
         >
-          {player1?.accuracy ? `${(player1.accuracy * 100).toFixed(2)}%` : ''}
+          {accuracy1 ? `${(accuracy1 * 100).toFixed(2)}%` : ''}
         </p>
       </div>
       <span className='w-[1vw]' />
@@ -142,7 +189,7 @@ function RealtimeScore(session: SessionState) {
             isPlayer2Super ? 'text-[4vw]' : 'text-[3vw]'
           }`}
         >
-          {player2?.accuracy ? `${(player2.accuracy * 100).toFixed(2)}%` : ''}
+          {accuracy2 ? `${(accuracy2 * 100).toFixed(2)}%` : ''}
         </p>
       </div>
     </div>
