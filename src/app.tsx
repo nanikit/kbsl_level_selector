@@ -1,3 +1,4 @@
+import React, { useRef } from 'react';
 import { useQuery } from 'react-query';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
 import {
@@ -151,8 +152,24 @@ function MapCard({
     }
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const copyKeyAndPick = (ev: React.MouseEvent) => {
+    ev.preventDefault();
+    // obs-browser: Uncaught (in promise) NotAllowedError: Write permission denied.
+    navigator.clipboard.writeText(map.id);
+    const input = inputRef.current;
+    if (input) {
+      input.value = map.id;
+      input.select();
+      document.execCommand('copy');
+    }
+    onStatusChanged?.('picked');
+  };
+
   return (
     <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>
+      <input type='text' ref={inputRef} className='fixed top-0 left-[9999px] w-4 h-2 z-30' />
       <div
         className={
           'relative w-full h-full rounded-[1vw] bg-cover font-extrabold z-10' +
@@ -161,10 +178,7 @@ function MapCard({
         }
         style={{ backgroundImage: cover ? `url(${cover})` : '' }}
         onClick={setStatus}
-        onContextMenu={(ev) => {
-          ev.preventDefault();
-          onStatusChanged?.('picked');
-        }}
+        onContextMenu={copyKeyAndPick}
       >
         {!!cover && (
           <>
