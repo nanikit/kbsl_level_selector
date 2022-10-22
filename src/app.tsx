@@ -34,6 +34,27 @@ export function App() {
   const { title, description, host, levels, matchResult, lastCursorIndex } = match;
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
   const pickedLevel = levels[pickedIndex];
+  const columnCounts = [
+    [],
+    [1],
+    [2],
+    [3],
+    [2, 2],
+    [3, 2],
+    [3, 3],
+    [2, 3, 2],
+    [3, 2, 3],
+    [3, 3, 3],
+    [3, 4, 3],
+    [3, 3, 3, 2],
+    [4, 4, 4],
+    [4, 3, 3, 3],
+  ][levels.length];
+  const columnSliceIndices = columnCounts.reduce(
+    (acc, elem) => (acc.push(acc[acc.length - 1] + elem), acc),
+    [0],
+  );
+  const has4Column = Math.max(...columnCounts) >= 4;
 
   return (
     <main>
@@ -50,21 +71,35 @@ export function App() {
           <p className='text-[2.5vw] leading-[3vw]'>{description}</p>
         </div>
 
-        <div className='flex-[72_1_0] px-[4vw]'>
-          <div className='aspect-[2.96] flex flex-row flex-wrap'>
-            {levels.map(({ hash, difficulty }, index) => (
-              <div key={hash || index} className='flex-[1_0] basis-1/3 w-full h-1/3 p-[0.5vw]'>
-                <MapCard
-                  title={match.titles[index]}
-                  hash={hash}
-                  difficulty={difficulty}
-                  status={matchResult?.[index]}
-                  highlight={lastCursorIndex === index}
-                  onStatusChanged={(status) => saveStatus(status, index)}
-                />
-              </div>
-            ))}
-          </div>
+        <div
+          className={`flex-[72_1_0] px-[4vw] flex flex-col justify-center ${
+            columnCounts.length >= 4 ? 'pb-[2vw]' : 'pb-[6vw]'
+          }`}
+        >
+          {columnCounts.map((_, rowIndex) => (
+            <div key={rowIndex} className='flex h-[10.3vw] justify-center'>
+              {levels
+                .slice(columnSliceIndices[rowIndex], columnSliceIndices[rowIndex + 1])
+                .map(({ hash, difficulty }, columnIndex) => {
+                  const index = columnSliceIndices[rowIndex] + columnIndex;
+                  return (
+                    <div
+                      key={`${hash}-${columnIndex}`}
+                      className={`flex-[0_0] p-[0.5vw] ${has4Column ? 'basis-1/4' : 'basis-1/3'}`}
+                    >
+                      <MapCard
+                        title={match.titles[index]}
+                        hash={hash}
+                        difficulty={difficulty}
+                        status={matchResult?.[index]}
+                        highlight={lastCursorIndex === index}
+                        onStatusChanged={(status) => saveStatus(status, index)}
+                      />
+                    </div>
+                  );
+                })}
+            </div>
+          ))}
         </div>
       </div>
       <OneToOneMatchStatus

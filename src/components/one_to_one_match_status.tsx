@@ -219,7 +219,8 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
       });
       const json = JSON.parse(text);
       const matchUpdate = getMatchFromPlaylist(json);
-      saveMatch({ ...match, ...matchUpdate });
+      const safeLength = matchUpdate.levels?.length ?? match.matchResult.length;
+      saveMatch({ ...match, matchResult: match.matchResult.slice(0, safeLength), ...matchUpdate });
     },
     [match],
   );
