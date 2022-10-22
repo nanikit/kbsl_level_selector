@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
@@ -11,6 +11,7 @@ import {
   useMatchInformation,
   useOneToOneStatus,
 } from '../hooks/local_storage_hooks';
+import { useSyncedScore } from '../hooks/use_synced_score';
 import { SessionState, useTournamentAssistant } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Match, User } from '../services/protos/models';
@@ -59,7 +60,7 @@ export default function OneToOneMatchStatus({
 
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <RealtimeScore {...session} />
+      <RealtimeScore {...session} match={match} />
       <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between'>
         <Nameplate
           userId={player1}
@@ -116,54 +117,10 @@ function hasPlayer(match: Match, player: User) {
   return match.associatedUsers?.includes(guid);
 }
 
-function timeout(milliseconds: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-}
+function RealtimeScore(session: SessionState & { match?: Match }) {
+  const player1 = useSyncedScore({ player: session.player1, score: session.player1Score });
+  const player2 = useSyncedScore({ player: session.player2, score: session.player2Score });
 
-function RealtimeScore(session: SessionState) {
-  const { player1Score: player1Edge, player2Score: player2Edge } = session;
-  const player1Delay = session.player1?.streamDelayMs;
-  const player2Delay = session.player2?.streamDelayMs;
-
-  type ScoreState = {
-    player1?: Push_RealtimeScore;
-    player2?: Push_RealtimeScore;
-  };
-  const [state, collect] = useReducer(
-    (state: ScoreState, message: ScoreState) => {
-      return { ...state, ...message };
-    },
-    { player1: undefined, player2: undefined },
-  );
-
-  const waitDelay = async (streamDelay?: number) => {
-    let delay = Math.max(0, Math.min(15000, (streamDelay ?? 0) - 200));
-    const seemsNotStreamer = delay > 10000;
-    if (seemsNotStreamer) {
-      delay -= 5000;
-    }
-    if (delay) {
-      await timeout(delay);
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      await waitDelay(player1Delay);
-      collect({ player1: player1Edge });
-    })();
-  }, [player1Edge, player1Delay]);
-
-  useEffect(() => {
-    (async () => {
-      await waitDelay(player2Delay);
-      collect({ player2: player2Edge });
-    })();
-  }, [player2Edge, player2Delay]);
-
-  const { player1, player2 } = state;
   const accuracy1 = player1?.accuracy;
   const accuracy2 = player2?.accuracy;
   const hasScoreBoth = accuracy1 !== undefined && accuracy2 !== undefined;
@@ -172,7 +129,7 @@ function RealtimeScore(session: SessionState) {
   return (
     <div className='h-[6vw] pb-[1.3vw] flex flex-row flex-nowrap items-end justify-center font-[esamanru] text-white text-outshadow'>
       <div className='flex flex-col items-end'>
-        <p className='text-[1.5vw] leading-[1.5vw] w-[2vw]'>{isFullCombo(player1) ? 'FC' : ''}</p>
+        <p className='text-[1.5vw] leading-[1.5vw]'>{getMissText(player1)}</p>
         <p
           className={`leading-[3vw] w-[15vw] font-[Consolas] text-right transition-all ${
             isPlayer1Super ? 'text-[4vw]' : 'text-[3vw]'
@@ -183,7 +140,7 @@ function RealtimeScore(session: SessionState) {
       </div>
       <span className='w-[1vw]' />
       <div className='flex flex-col items-start'>
-        <p className='text-[1.5vw] leading-[1.5vw] w-[2vw]'>{isFullCombo(player2) ? 'FC' : ''}</p>
+        <p className='text-[1.5vw] leading-[1.5vw]'>{getMissText(player2)}</p>
         <p
           className={`leading-[3vw] w-[15vw] font-[Consolas] transition-all ${
             isPlayer2Super ? 'text-[4vw]' : 'text-[3vw]'
@@ -196,12 +153,15 @@ function RealtimeScore(session: SessionState) {
   );
 }
 
-function isFullCombo(score?: Push_RealtimeScore): boolean {
+function getMissText(score?: Push_RealtimeScore): string {
   if (score === undefined) {
-    return false;
+    return '';
   }
   const { badCuts, bombHits, notesMissed, wallHits } = score?.scoreTracker ?? {};
-  return !(badCuts || bombHits || notesMissed || wallHits);
+  if (!(badCuts || bombHits || notesMissed || wallHits)) {
+    return 'FC';
+  }
+  return `${(badCuts ?? 0) + (notesMissed ?? 0)}`;
 }
 
 function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
