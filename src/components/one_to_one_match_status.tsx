@@ -302,13 +302,22 @@ function Nameplate({
   const beatLeaderProfileQuery = useQuery([`${apiOrigin}/api/profile/${userId}`], {
     enabled: !!userId,
   });
-  const playerQuery = useQuery([`https://new.scoresaber.com/api/player/${userId}/basic`], {
-    enabled: !!userId,
-  });
+  const scoresaberProfileQuery = useQuery(
+    [`https://new.scoresaber.com/api/player/${userId}/basic`],
+    {
+      enabled: !!userId,
+    },
+  );
+  const scoresaberProfile = scoresaberProfileQuery.data as
+    | { playerInfo: { playerName: string } }
+    | undefined;
+  const beatLeaderProfile = beatLeaderProfileQuery.data as
+    | { name: string; avatar: string }
+    | undefined;
   const beatLeaderPfpUrl = (beatLeaderProfileQuery.data as any)?.avatar;
   const scoresaberPfpUrl = `https://cdn.scoresaber.com/avatars/${userId}.jpg`;
   const pfpUrl = beatLeaderPfpUrl ?? scoresaberPfpUrl;
-  const { playerName } = (playerQuery.data as any)?.playerInfo ?? {};
+  const name = beatLeaderProfile?.name ?? scoresaberProfile?.playerInfo.playerName ?? '';
 
   return (
     <div className={`flex-[1.7] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
@@ -349,7 +358,7 @@ function Nameplate({
           }`}
         >
           <p className='font-[Maplestory] text-[2vw] font-extrabold text-white text-outshadow '>
-            {playerName}
+            {name}
           </p>
         </div>
       </div>
