@@ -43,7 +43,7 @@ export default function OneToOneMatchStatus({
 
   const setPlayer = (index: number) => {
     const existing = index === 1 ? player1 : player2;
-    const id = prompt('Input scoresaber user id', existing);
+    const id = prompt('Input user id', existing);
     if (id == null) {
       return;
     }
@@ -280,6 +280,8 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
   );
 }
 
+const apiOrigin = location.origin.endsWith('pages.dev') ? '' : 'http://localhost:8788';
+
 function Nameplate({
   userId,
   win,
@@ -297,16 +299,22 @@ function Nameplate({
   onRetry?: () => void;
   onPfpClick?: () => void;
 }) {
+  const beatLeaderProfileQuery = useQuery([`${apiOrigin}/api/profile/${userId}`], {
+    enabled: !!userId,
+  });
   const playerQuery = useQuery([`https://new.scoresaber.com/api/player/${userId}/basic`], {
     enabled: !!userId,
   });
+  const beatLeaderPfpUrl = (beatLeaderProfileQuery.data as any)?.avatar;
+  const scoresaberPfpUrl = `https://cdn.scoresaber.com/avatars/${userId}.jpg`;
+  const pfpUrl = beatLeaderPfpUrl ?? scoresaberPfpUrl;
   const { playerName } = (playerQuery.data as any)?.playerInfo ?? {};
 
   return (
     <div className={`flex-[1.7] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
       <img
         className='h-full aspect-square border-[0.15vw] border-violet-900 shadow-xl rounded-[2vw]'
-        src={userId ? `https://cdn.scoresaber.com/avatars/${userId}.jpg` : '/unknown.jpg'}
+        src={userId ? pfpUrl : '/unknown.jpg'}
         onClick={onPfpClick}
       />
       <span className='w-4' />
