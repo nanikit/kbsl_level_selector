@@ -270,7 +270,9 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
         <GiLightSabers className='text-[4vw]' />
       )}
       <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
-        {!!(songName || songAuthorName) && <p className='text-[2vw]'>{songName}</p>}
+        {!!(songName || songAuthorName) && (
+          <p className='flex-shrink min-h-0 overflow-hidden text-[2vw]'>{songName}</p>
+        )}
         {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
       </div>
     </div>
