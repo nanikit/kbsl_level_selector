@@ -11,12 +11,12 @@ export function useSyncedScore({ player, score }: { player?: User; score?: Push_
     queuedScore?: Push_RealtimeScore;
     playState?: User_PlayStates;
   };
-  const [state, collect] = useReducer((state: ScoreState, message: ScoreState) => {
+  const [state, collect] = useReducer((state: ScoreState, message: ScoreState): ScoreState => {
     return { ...state, ...message };
   }, {});
 
   const waitDelay = async (streamDelay?: number) => {
-    let delay = Math.max(0, Math.min(15000, (streamDelay ?? 0) - 200));
+    let delay = Math.max(0, Math.min(15000, (streamDelay ?? 0) - 34));
     const seemsNotStreamer = delay > 10000;
     if (seemsNotStreamer) {
       delay -= 5000;
