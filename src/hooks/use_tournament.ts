@@ -1,8 +1,8 @@
-import { useReducer } from 'react';
+import { atom, useAtom } from 'jotai';
+import { uniqBy } from 'lodash-es';
 import useWebSocket from 'react-use-websocket';
 import { Match, User, User_ClientTypes } from '../services/protos/models';
 import { Packet, Push_RealtimeScore } from '../services/protos/packets';
-import { uniqBy } from 'lodash-es';
 
 export type TournamentSearch = {
   server?: string;
@@ -20,7 +20,26 @@ export type SessionState = {
   self?: User;
 };
 
+const sessionStateAtom = atom({} as SessionState);
+const sessionAtom = atom(
+  (get) => get(sessionStateAtom),
+  (
+    get,
+    set,
+    input: {
+      packet: Packet;
+      search: TournamentSearch;
+      sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
+    },
+  ) => {
+    const { packet, search, sendMessage } = input;
+    set(sessionStateAtom, collectMessage(packet, { state: get(sessionAtom), search, sendMessage }));
+  },
+);
+
 export function useTournamentAssistant(search: TournamentSearch) {
+  const [session, dispatch] = useAtom(sessionAtom);
+
   const { sendMessage } = useWebSocket(search.server ?? null, {
     onOpen: () => {
       sendMessage(
@@ -43,15 +62,10 @@ export function useTournamentAssistant(search: TournamentSearch) {
       const packet = Packet.decode(new Uint8Array(buffer));
 
       console.log(packet);
-      dispatch(packet);
+      dispatch({ packet, search, sendMessage });
     },
     shouldReconnect: () => true,
   });
-
-  const [session, dispatch] = useReducer((state: SessionState, message: Packet) => {
-    const newState = collectMessage(message, { search, state, sendMessage });
-    return newState;
-  }, {});
 
   return [session, dispatch] as const;
 }
