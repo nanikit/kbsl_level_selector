@@ -47,37 +47,43 @@ const atomWithLocalStorage = <T>(key: string, initialValue: T) => {
   return derivedAtom;
 };
 
-const matchInformationAtom = atomWithLocalStorage('match', {
-  title: '',
-  host: '',
-  description: '',
-  titles: [],
-  levels: [],
-  matchResult: [],
-} as MatchInformation);
+export const presetCount = 5;
+export const presetIndexAtom = atomWithLocalStorage('presetIndex', 0);
 
-function migrateConfiguration() {
-  const json = localStorage.getItem('match');
-  if (json === null) {
-    return;
-  }
+const matchInformationAtoms = [...Array(presetCount).keys()].map((i) =>
+  atomWithLocalStorage(`match${i + 1}`, {
+    title: '',
+    host: '',
+    description: '',
+    titles: [],
+    levels: [],
+    matchResult: [],
+  } as MatchInformation),
+);
 
-  const obj = JSON.parse(json);
-  if (![obj.levels, obj.matchResult, obj.titles].every(Array.isArray)) {
-    debugger;
-    localStorage.removeItem('match');
-  }
-}
+const matchInformationAtom = atom(
+  (get) => get(matchInformationAtoms[get(presetIndexAtom)]),
+  (get, set, update: MatchInformation) => {
+    set(matchInformationAtoms[get(presetIndexAtom)], update);
+  },
+);
 
-migrateConfiguration();
+const oneToOneAtoms = [...Array(presetCount).keys()].map((i) =>
+  atomWithLocalStorage<OneToOneStatus>(`oneToOneStatus${i}`, {
+    player1: '',
+    player2: '',
+    hasPlayer1Retry: true,
+    hasPlayer2Retry: true,
+    tournamentServer: '',
+  }),
+);
 
-const oneToOneAtom = atomWithLocalStorage('oneToOneStatus', {
-  player1: '',
-  player2: '',
-  hasPlayer1Retry: true,
-  hasPlayer2Retry: true,
-  tournamentServer: '',
-});
+const oneToOneAtom = atom(
+  (get) => get(oneToOneAtoms[get(presetIndexAtom)]),
+  (get, set, update: OneToOneStatus) => {
+    set(oneToOneAtoms[get(presetIndexAtom)], update);
+  },
+);
 
 export function getMatchFromPlaylist(data: unknown): Partial<MatchInformation> {
   const playlist = data as any;

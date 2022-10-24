@@ -1,14 +1,18 @@
-import React, { useRef } from 'react';
+import { useAtom } from 'jotai';
+import React, { useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
 import {
   getMatchFromPlaylist,
   MatchMapStatus,
+  presetCount,
+  presetIndexAtom,
   useMatchInformation,
 } from './hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty, getDataUrlFromHash } from './services/beatsaver';
 
 export function App() {
+  const [, setPresetIndex] = useAtom(presetIndexAtom);
   const [match, saveMatch] = useMatchInformation();
 
   const saveStatus = (status: MatchMapStatus, index: number) => {
@@ -30,6 +34,22 @@ export function App() {
     },
     enabled: !match.host,
   });
+
+  useEffect(() => {
+    function capture(ev: KeyboardEvent) {
+      console.log(ev);
+      const code = ev.key.charCodeAt(0);
+      const index = code - '1'[0].charCodeAt(0);
+      if (0 <= index && index < presetCount) {
+        setPresetIndex(index);
+      }
+    }
+
+    document.body.addEventListener('keypress', capture);
+    return () => {
+      document.body.removeEventListener('keypress', capture);
+    };
+  }, [setPresetIndex]);
 
   const { title, description, host, levels, matchResult, lastCursorIndex } = match;
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
@@ -198,6 +218,7 @@ function MapCard({
       input.value = map.id;
       input.select();
       document.execCommand('copy');
+      input.blur();
     }
     onStatusChanged?.('picked');
   };
