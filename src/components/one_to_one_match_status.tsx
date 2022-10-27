@@ -12,7 +12,7 @@ import {
   useOneToOneStatus,
 } from '../hooks/local_storage_hooks';
 import { useSyncedScore } from '../hooks/use_synced_score';
-import { SessionState, useTournamentAssistant } from '../hooks/use_tournament';
+import { TournamentState, useTournamentAssistant } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Match, User } from '../services/protos/models';
 import { Push_RealtimeScore } from '../services/protos/packets';
@@ -32,9 +32,9 @@ export default function OneToOneMatchStatus({
   const { player1, player2, hasPlayer1Retry, hasPlayer2Retry, tournamentServer } = local ?? {};
   const [state, setState] = useState({ server: tournamentServer as string | undefined });
 
-  const [session] = useTournamentAssistant({ player1, player2, server: state.server });
+  const [tournament] = useTournamentAssistant({ player1, player2, server: state.server });
 
-  const match = pickCurrentMatch(session);
+  const match = pickCurrentMatch(tournament);
   const tournamentMapHash = match?.selectedLevel?.levelId?.replace('custom_level_', '');
   const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? tournamentMapHash ?? '')], {
     enabled: !!(mapHash ?? tournamentMapHash),
@@ -60,7 +60,7 @@ export default function OneToOneMatchStatus({
 
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <RealtimeScore {...session} match={match} />
+      <RealtimeScore {...tournament} match={match} />
       <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between'>
         <Nameplate
           userId={player1}
@@ -93,13 +93,13 @@ export default function OneToOneMatchStatus({
   );
 }
 
-function pickCurrentMatch(session: SessionState) {
-  const { player1, player2 } = session;
+function pickCurrentMatch(tournament: TournamentState) {
+  const { player1, player2 } = tournament;
   if (!player1 || !player2) {
     return;
   }
 
-  const relatedMatches = session.matches
+  const relatedMatches = tournament.matches
     ?.filter((x) => hasPlayer(x, player1) && hasPlayer(x, player2))
     .sort(
       (a, b) =>
@@ -117,9 +117,9 @@ function hasPlayer(match: Match, player: User) {
   return match.associatedUsers?.includes(guid);
 }
 
-function RealtimeScore(session: SessionState & { match?: Match }) {
-  const player1 = useSyncedScore({ player: session.player1, score: session.player1Score });
-  const player2 = useSyncedScore({ player: session.player2, score: session.player2Score });
+function RealtimeScore(tournament: TournamentState & { match?: Match }) {
+  const player1 = useSyncedScore({ player: tournament.player1, score: tournament.player1Score });
+  const player2 = useSyncedScore({ player: tournament.player2, score: tournament.player2Score });
 
   const accuracy1 = player1?.accuracy;
   const accuracy2 = player2?.accuracy;

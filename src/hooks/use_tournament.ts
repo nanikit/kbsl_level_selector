@@ -10,7 +10,7 @@ export type TournamentSearch = {
   player2?: string;
 };
 
-export type SessionState = {
+export type TournamentState = {
   player1?: User;
   player1Score?: Push_RealtimeScore;
   player2?: User;
@@ -20,9 +20,9 @@ export type SessionState = {
   self?: User;
 };
 
-const sessionStateAtom = atom({} as SessionState);
-const sessionAtom = atom(
-  (get) => get(sessionStateAtom),
+const tournamentStateAtom = atom({} as TournamentState);
+const tournamentAtom = atom(
+  (get) => get(tournamentStateAtom),
   (
     get,
     set,
@@ -33,12 +33,15 @@ const sessionAtom = atom(
     },
   ) => {
     const { packet, search, sendMessage } = input;
-    set(sessionStateAtom, collectMessage(packet, { state: get(sessionAtom), search, sendMessage }));
+    set(
+      tournamentStateAtom,
+      collectMessage(packet, { state: get(tournamentAtom), search, sendMessage }),
+    );
   },
 );
 
 export function useTournamentAssistant(search: TournamentSearch) {
-  const [session, dispatch] = useAtom(sessionAtom);
+  const [tournament, dispatch] = useAtom(tournamentAtom);
 
   const { sendMessage } = useWebSocket(search.server ?? null, {
     onOpen: () => {
@@ -67,7 +70,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
     shouldReconnect: () => true,
   });
 
-  return [session, dispatch] as const;
+  return [tournament, dispatch] as const;
 }
 
 function collectMessage(
@@ -77,11 +80,11 @@ function collectMessage(
     search,
     sendMessage,
   }: {
-    state: SessionState;
+    state: TournamentState;
     search: TournamentSearch;
     sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
   },
-): SessionState {
+): TournamentState {
   const { player1, player2 } = search;
   const { response, event, push } = message;
   const { connect } = response ?? {};
@@ -114,7 +117,7 @@ function collectMessage(
       self,
       player1: p1,
       player2: p2,
-    } as SessionState;
+    } as TournamentState;
 
     return newState;
   } else if (match && state.matches) {
