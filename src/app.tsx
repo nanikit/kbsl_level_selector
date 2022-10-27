@@ -1,19 +1,41 @@
 import { useAtom } from 'jotai';
-import React, { useEffect, useRef } from 'react';
-import { useQuery } from 'react-query';
+import { groupBy } from 'lodash-es';
+import { useEffect } from 'react';
+import { useQueries, useQuery } from 'react-query';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
+import { MapCard } from './containers/map_card';
 import {
   getMatchFromPlaylist,
+  Level,
   MatchMapStatus,
   presetCount,
   presetIndexAtom,
   useMatchInformation,
+  useOneToOneStatus,
 } from './hooks/local_storage_hooks';
+import { useTournamentAssistant } from './hooks/use_tournament';
 import { BeatsaverMap, Difficulty, getDataUrlFromHash } from './services/beatsaver';
+import { Match } from './services/protos/models';
 
 export function App() {
   const [, setPresetIndex] = useAtom(presetIndexAtom);
   const [match, saveMatch] = useMatchInformation();
+
+  const [local] = useOneToOneStatus();
+  const { player1, player2 } = local ?? {};
+  const [tournament, { setMatch }] = useTournamentAssistant({
+    player1,
+    player2,
+    server: local.tournamentServer,
+  });
+
+  const mapQueries = useQueries<BeatsaverMap[]>(
+    match.levels?.map((level) => ({
+      queryKey: [getDataUrlFromHash(level.hash ?? '')],
+      enabled: !!level.hash,
+      staleTime: Infinity,
+    })),
+  );
 
   const saveStatus = (status: MatchMapStatus, index: number) => {
     const matchResult = match.matchResult ?? [];
@@ -23,6 +45,15 @@ export function App() {
           matchResult[i] = 'normal';
         }
       }
+    }
+    const selectedMap = mapQueries[index].data as BeatsaverMap;
+    if (tournament.match && selectedMap) {
+      const match = composeTournamentMatch({
+        selectedLevel: levels[index],
+        selectedMap,
+        existingMatch: tournament.match,
+      });
+      setMatch(match);
     }
     matchResult[index] = status;
     saveMatch({ ...match, lastCursorIndex: index, matchResult });
@@ -37,7 +68,6 @@ export function App() {
 
   useEffect(() => {
     function capture(ev: KeyboardEvent) {
-      console.log(ev);
       const code = ev.key.charCodeAt(0);
       const index = code - '1'[0].charCodeAt(0);
       if (0 <= index && index < presetCount) {
@@ -54,6 +84,8 @@ export function App() {
   const { title, description, host, levels, matchResult, lastCursorIndex } = match;
   const pickedIndex = matchResult?.findIndex((x) => x === 'picked');
   const pickedLevel = levels[pickedIndex];
+  const tournamentMapHash = tournament.match?.selectedLevel?.levelId?.replace('custom_level_', '');
+  const hash = pickedLevel?.hash ?? tournamentMapHash ?? '';
   const columnCounts = [
     [],
     [1],
@@ -113,6 +145,7 @@ export function App() {
                         difficulty={difficulty}
                         status={matchResult?.[index]}
                         highlight={lastCursorIndex === index}
+                        map={mapQueries[index]?.data as BeatsaverMap}
                         onStatusChanged={(status) => saveStatus(status, index)}
                       />
                     </div>
@@ -123,7 +156,7 @@ export function App() {
         </div>
       </div>
       <OneToOneMatchStatus
-        mapHash={pickedLevel?.hash}
+        mapHash={hash}
         goal={Math.ceil((levels.length - matchResult.filter((x) => x === 'banned').length) / 2)}
         p1Win={matchResult?.filter((x) => x === 'p1_win').length}
         p2Win={matchResult?.filter((x) => x === 'p2_win').length}
@@ -132,131 +165,45 @@ export function App() {
   );
 }
 
-function MapCard({
-  title,
-  hash,
-  status,
-  difficulty,
-  highlight,
-  onStatusChanged,
+function composeTournamentMatch({
+  selectedLevel,
+  selectedMap,
+  existingMatch: match,
 }: {
-  title?: string;
-  hash?: string;
-  difficulty?: Difficulty;
-  status?: MatchMapStatus;
-  highlight?: boolean;
-  onStatusChanged?: (status: MatchMapStatus) => void;
-}) {
-  const { data } = useQuery([getDataUrlFromHash(hash ?? '')], {
-    enabled: !!hash,
-    staleTime: Infinity,
-  });
-  const map = data as BeatsaverMap;
+  selectedLevel: Level;
+  selectedMap: BeatsaverMap;
+  existingMatch: Match;
+}): Match {
+  const groups = groupBy(selectedMap.versions[0].diffs, (x) => x.characteristic);
+  const characteristics = Object.entries(groups).map(([name, diffs]) => ({
+    serializedName: name,
+    difficulties: diffs.map((x) => difficultyToIndex(x.difficulty)),
+  }));
+  return {
+    ...match,
+    selectedLevel: {
+      levelId: `custom_level_${selectedLevel?.hash}`,
+      name: selectedMap?.metadata?.songName,
+      characteristics,
+    },
+    selectedCharacteristic: characteristics.find(
+      (x) => x.serializedName === selectedLevel?.characteristic,
+    ),
+    selectedDifficulty: difficultyToIndex(selectedLevel?.difficulty ?? 'Easy'),
+  };
+}
 
-  const cover = map?.versions?.[0]?.coverURL;
-
-  let statusCss = 'border-black text-black';
-  switch (status) {
-    case 'banned':
-      statusCss = `${
-        highlight ? 'cone [--cone-color1:blue] [--cone-color2:cyan]' : 'bg-gray-400'
-      } text-gray-400`;
-      statusCss = `${
-        highlight
-          ? 'cone-glow [--cone-color1:hsl(0,0%,30%)] [--cone-color2:hsl(0,0%,70%)]'
-          : 'bg-gray-400'
-      } text-gray-400`;
-      break;
-    case 'picked':
-      statusCss = `${
-        highlight
-          ? 'cone-glow [--cone-color1:hsl(50,100%,30%)] [--cone-color2:hsl(60,100%,50%)]'
-          : 'bg-yellow-400'
-      } text-yellow-500`;
-      break;
-    case 'p1_win':
-      statusCss = 'border-red-600 text-red-600';
-      statusCss = `${
-        highlight
-          ? 'cone-glow [--cone-color1:hsl(0,100%,40%)] [--cone-color2:hsl(320,100%,70%)]'
-          : 'bg-red-600'
-      } text-red-600`;
-      break;
-    case 'p2_win':
-      statusCss = `${
-        highlight
-          ? 'cone-glow [--cone-color1:hsl(240,100%,40%)] [--cone-color2:hsl(200,100%,70%)]'
-          : 'bg-blue-600'
-      } text-blue-600`;
-      break;
-    default:
-      statusCss = 'bg-black';
-      break;
+function difficultyToIndex(difficulty: Difficulty): number {
+  switch (difficulty) {
+    case 'Easy':
+      return 0;
+    case 'Normal':
+      return 1;
+    case 'Hard':
+      return 2;
+    case 'Expert':
+      return 3;
+    case 'ExpertPlus':
+      return 4;
   }
-
-  const setStatus = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const { clientX: x, clientY: y } = ev;
-    const area = ev.currentTarget.getBoundingClientRect();
-    const { left, top, width, height } = area;
-    const isLeft = (x - left) / width < 0.5;
-    const isTop = (y - top) / height < 0.5;
-    if (isTop) {
-      onStatusChanged?.(isLeft ? 'normal' : 'banned');
-    } else {
-      onStatusChanged?.(isLeft ? 'p1_win' : 'p2_win');
-    }
-  };
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const copyKeyAndPick = (ev: React.MouseEvent) => {
-    ev.preventDefault();
-    // obs-browser: Uncaught (in promise) NotAllowedError: Write permission denied.
-    navigator.clipboard.writeText(map.id);
-    const input = inputRef.current;
-    if (input) {
-      input.value = map.id;
-      input.select();
-      document.execCommand('copy');
-      input.blur();
-    }
-    onStatusChanged?.('picked');
-  };
-
-  return (
-    <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>
-      <input type='text' ref={inputRef} className='fixed top-0 left-[9999px] w-4 h-2 z-30' />
-      <div
-        className={
-          'relative w-full h-full rounded-[1vw] bg-cover font-extrabold z-10' +
-          ' [text-shadow:0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white,0_0_0.3vw_white]' +
-          ` flex flex-row overflow-hidden bg-sky-100`
-        }
-        style={{ backgroundImage: cover ? `url(${cover})` : '' }}
-        onClick={setStatus}
-        onContextMenu={copyKeyAndPick}
-      >
-        {!!cover && (
-          <>
-            <img src={cover} className='absolute w-full h-full object-cover scale-150 blur-[1vw]' />
-            <img src={cover} className='relative h-full aspect-square object-cover' />
-          </>
-        )}
-        <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
-          <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
-          <p className='text-[2vw] leading-[2.2vw] inline w-full font-light overflow-hidden max-h-[4.2vw]'>
-            {title ?? map?.metadata?.songName ?? '-'}
-          </p>
-          <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
-            <p className='text-[1.2vw] leading-[1.5vw] mr-[0.5vw] whitespace-nowrap max-w-[13vw] overflow-hidden text-ellipsis'>
-              {map?.metadata?.levelAuthorName ?? ''}
-            </p>
-            <p className='text-[1.2vw] leading-[1.5vw]'>
-              {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }

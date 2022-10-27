@@ -21,8 +21,17 @@ export type MatchInformation = {
   lastCursorIndex?: number;
 };
 
-type Level = {
+export type PlaylistCharacteristic =
+  | 'Standard'
+  | 'OneSaber'
+  | 'NoArrows'
+  | '90Degree'
+  | '360Degree'
+  | 'Lightshow'
+  | 'Lawless';
+export type Level = {
   hash: string;
+  characteristic?: PlaylistCharacteristic;
   difficulty?: Difficulty;
 };
 
@@ -89,8 +98,9 @@ export function getMatchFromPlaylist(data: unknown): Partial<MatchInformation> {
   const playlist = data as any;
   const levels = playlist?.songs?.map((x: any) => ({
     hash: x.hash,
+    characteristic: x.difficulties?.[0].characteristic,
     difficulty: x.difficulties?.[0]?.name,
-  }));
+  })) as Level[];
   const matchUpdate = {
     host: '한국 비트세이버 커뮤니티',
     title: '',

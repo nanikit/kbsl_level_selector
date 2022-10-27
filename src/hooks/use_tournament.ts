@@ -3,6 +3,7 @@ import { uniqBy } from 'lodash-es';
 import useWebSocket from 'react-use-websocket';
 import { Match, User, User_ClientTypes } from '../services/protos/models';
 import { Packet, Push_RealtimeScore } from '../services/protos/packets';
+import { timeout } from '../services/utils';
 
 export type TournamentSearch = {
   server?: string;
@@ -16,6 +17,7 @@ export type TournamentState = {
   player2?: User;
   player2Score?: Push_RealtimeScore;
   matches?: Match[];
+  match?: Match;
   users?: User[];
   self?: User;
 };
@@ -70,7 +72,30 @@ export function useTournamentAssistant(search: TournamentSearch) {
     shouldReconnect: () => true,
   });
 
-  return [tournament, dispatch] as const;
+  return [
+    tournament,
+    {
+      setMatch: async (match: Match) => {
+        const players = match.associatedUsers
+          ?.map((x) => tournament.users?.find((u) => u.guid === x))
+          .filter((u) => u?.clientType == User_ClientTypes.Player);
+        sendMessage(
+          Packet.encode({
+            from: match.leader,
+            forwardingPacket: {
+              forwardTo: players?.flatMap((p) => (p?.guid ? [p.guid] : [])),
+              packet: { command: { loadSong: { levelId: match.selectedLevel?.levelId } } },
+            },
+          }).finish(),
+        );
+        // I don't know why but if miss it then difficulty doesn't change.
+        await timeout(100);
+        // Original client calls this first, but it doesn't change difficulty sometimes.
+        // And sometimes crashes.
+        sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
+      },
+    },
+  ] as const;
 }
 
 function collectMessage(
@@ -118,8 +143,9 @@ function collectMessage(
       player1: p1,
       player2: p2,
     } as TournamentState;
+    const match = pickCurrentMatch(newState);
 
-    return newState;
+    return { ...newState, match };
   } else if (match && state.matches) {
     if (state.self && !match.associatedUsers?.includes(state.self.guid!)) {
       if (match.associatedUsers?.includes(state.player1?.guid!)) {
@@ -139,7 +165,9 @@ function collectMessage(
       newMatches.splice(index, 1, match);
     }
 
-    return { ...state, matches: newMatches };
+    const newState = { ...state, matches: newMatches };
+    const currentMatch = pickCurrentMatch(newState);
+    return { ...newState, match: currentMatch };
   } else if (user && state.users) {
     const p1 = user.userId === player1 ? user : state.player1;
     const p2 = user.userId === player2 ? user : state.player2;
@@ -185,4 +213,28 @@ function associateMe(
   } as Match;
   sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match: newMatch } } }).finish());
   console.log(`Associate me with ${match.guid}`);
+}
+
+function pickCurrentMatch(tournament: TournamentState) {
+  const { player1, player2 } = tournament;
+  if (!player1 || !player2) {
+    return;
+  }
+
+  const relatedMatches = tournament.matches
+    ?.filter((x) => hasPlayer(x, player1) && hasPlayer(x, player2))
+    .sort(
+      (a, b) =>
+        new Date(b.startTime || '1990-01-01').getTime() -
+        new Date(a.startTime || '1990-01-01').getTime(),
+    );
+  return relatedMatches?.[0];
+}
+
+function hasPlayer(match: Match, player: User) {
+  const { guid } = player;
+  if (!guid) {
+    return false;
+  }
+  return match.associatedUsers?.includes(guid);
 }

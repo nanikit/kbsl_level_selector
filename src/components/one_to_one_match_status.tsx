@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
@@ -12,9 +12,8 @@ import {
   useOneToOneStatus,
 } from '../hooks/local_storage_hooks';
 import { useSyncedScore } from '../hooks/use_synced_score';
-import { TournamentState, useTournamentAssistant } from '../hooks/use_tournament';
+import { TournamentState } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
-import { Match, User } from '../services/protos/models';
 import { Push_RealtimeScore } from '../services/protos/packets';
 
 export default function OneToOneMatchStatus({
@@ -22,22 +21,21 @@ export default function OneToOneMatchStatus({
   p1Win,
   p2Win,
   goal,
+  tournament,
 }: {
   mapHash?: string;
   p1Win?: number;
   p2Win?: number;
   goal?: number;
+  tournament?: TournamentState;
 }) {
   const [local, saveToLocal] = useOneToOneStatus();
   const { player1, player2, hasPlayer1Retry, hasPlayer2Retry, tournamentServer } = local ?? {};
-  const [state, setState] = useState({ server: tournamentServer as string | undefined });
 
-  const [tournament] = useTournamentAssistant({ player1, player2, server: state.server });
-
-  const match = pickCurrentMatch(tournament);
-  const tournamentMapHash = match?.selectedLevel?.levelId?.replace('custom_level_', '');
-  const hash = mapHash ?? tournamentMapHash ?? '';
-  const mapQuery = useQuery([getDataUrlFromHash(hash)], { enabled: !!hash });
+  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? '')], {
+    enabled: !!mapHash,
+    staleTime: Infinity,
+  });
 
   const mapData = mapQuery.data as BeatsaverMap | undefined;
 
@@ -53,13 +51,13 @@ export default function OneToOneMatchStatus({
   };
 
   useEffect(() => {
-    setState({ server: undefined });
-    setState({ server: tournamentServer });
+    saveToLocal({ ...local, tournamentServer: '' });
+    saveToLocal({ ...local, tournamentServer });
   }, [player1, player2, tournamentServer]);
 
   return (
     <div className='mx-[5vmin] flex flex-col justify-end'>
-      <RealtimeScore {...tournament} match={match} />
+      <RealtimeScore {...tournament} />
       <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between'>
         <Nameplate
           userId={player1}
@@ -73,7 +71,7 @@ export default function OneToOneMatchStatus({
             saveToLocal({ ...local, hasPlayer1Retry: !local?.hasPlayer1Retry } as OneToOneStatus);
           }}
         />
-        <CurrentMapCard mapData={mapData} hash={hash} />
+        <CurrentMapCard mapData={mapData} hash={mapHash} />
         <Nameplate
           userId={player2}
           win={p2Win}
@@ -92,31 +90,7 @@ export default function OneToOneMatchStatus({
   );
 }
 
-function pickCurrentMatch(tournament: TournamentState) {
-  const { player1, player2 } = tournament;
-  if (!player1 || !player2) {
-    return;
-  }
-
-  const relatedMatches = tournament.matches
-    ?.filter((x) => hasPlayer(x, player1) && hasPlayer(x, player2))
-    .sort(
-      (a, b) =>
-        new Date(b.startTime || '1990-01-01').getTime() -
-        new Date(a.startTime || '1990-01-01').getTime(),
-    );
-  return relatedMatches?.[0];
-}
-
-function hasPlayer(match: Match, player: User) {
-  const { guid } = player;
-  if (!guid) {
-    return false;
-  }
-  return match.associatedUsers?.includes(guid);
-}
-
-function RealtimeScore(tournament: TournamentState & { match?: Match }) {
+function RealtimeScore(tournament: TournamentState) {
   const player1 = useSyncedScore({ player: tournament.player1, score: tournament.player1Score });
   const player2 = useSyncedScore({ player: tournament.player2, score: tournament.player2Score });
 
@@ -260,11 +234,13 @@ function Nameplate({
 }) {
   const beatLeaderProfileQuery = useQuery([`${apiOrigin}/api/profile/${userId}`], {
     enabled: !!userId,
+    staleTime: Infinity,
   });
   const scoresaberProfileQuery = useQuery(
     [`https://new.scoresaber.com/api/player/${userId}/basic`],
     {
       enabled: !!userId,
+      staleTime: Infinity,
     },
   );
   const scoresaberProfile = scoresaberProfileQuery.data as
