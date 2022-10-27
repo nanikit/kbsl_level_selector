@@ -36,9 +36,8 @@ export default function OneToOneMatchStatus({
 
   const match = pickCurrentMatch(tournament);
   const tournamentMapHash = match?.selectedLevel?.levelId?.replace('custom_level_', '');
-  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? tournamentMapHash ?? '')], {
-    enabled: !!(mapHash ?? tournamentMapHash),
-  });
+  const hash = mapHash ?? tournamentMapHash ?? '';
+  const mapQuery = useQuery([getDataUrlFromHash(hash)], { enabled: !!hash });
 
   const mapData = mapQuery.data as BeatsaverMap | undefined;
 
@@ -74,7 +73,7 @@ export default function OneToOneMatchStatus({
             saveToLocal({ ...local, hasPlayer1Retry: !local?.hasPlayer1Retry } as OneToOneStatus);
           }}
         />
-        <CurrentMapCard mapData={mapData} />
+        <CurrentMapCard mapData={mapData} hash={hash} />
         <Nameplate
           userId={player2}
           win={p2Win}
@@ -164,7 +163,7 @@ function getMissText(score?: Push_RealtimeScore): string {
   return `${(badCuts ?? 0) + (notesMissed ?? 0)}`;
 }
 
-function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
+function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: string }) {
   const [match, saveMatch] = useMatchInformation();
   const [oneToOne, saveOneToOne] = useOneToOneStatus();
 
@@ -194,7 +193,7 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
     ev.preventDefault();
     const url = prompt(
       'Input the tournament server url',
-      oneToOne.tournamentServer || 'ws://tournamentassistant:2053',
+      oneToOne.tournamentServer || 'ws://tournamentassistant.net:2053',
     );
     if (!url) {
       return;
@@ -203,12 +202,12 @@ function CurrentMapCard({ mapData }: { mapData?: BeatsaverMap }) {
   };
 
   const { versions, metadata } = (mapData ?? {}) as BeatsaverMap;
-  const latest = versions?.[versions.length - 1];
+  const revision = versions?.find((x) => x.hash === hash) ?? versions?.[versions.length - 1];
   const { songName, songAuthorName } = (metadata ?? {}) as {
     songName?: string;
     songAuthorName?: string;
   };
-  const coverUrl = latest?.coverURL;
+  const coverUrl = revision?.coverURL;
 
   return (
     <div
