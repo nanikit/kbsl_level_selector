@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { MatchMapStatus } from '../hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty } from '../services/beatsaver';
-import { useTextFit } from '../hooks/use_text_fit';
 import { useWindowSize } from 'react-use';
+import { TwoLineFittedText } from '../components/two_line_fitted_text';
 
 export function MapCard({
   title,
@@ -24,7 +24,6 @@ export function MapCard({
   const { versions } = map ?? {};
   const cover = (versions?.find((x) => x.hash === hash) ?? versions?.[versions.length - 1])
     ?.coverURL;
-  const titleRef = useRef(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   let statusCss = 'border-black text-black';
@@ -98,8 +97,6 @@ export function MapCard({
   };
 
   const { width: vw100 } = useWindowSize();
-  const maxSize = vw100 * 0.02;
-  useTextFit(titleRef, { maxWidth: vw100 * 0.19, maxHeight: vw100 * 0.044, maxSize }, [title]);
 
   return (
     <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>
@@ -123,12 +120,12 @@ export function MapCard({
         <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
           <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
           <div className='flex-1 flex flex-col justify-center text-[2vw] w-full font-light whitespace-pre-line'>
-            <p ref={titleRef}>
-              <span>
-                {title ?? map?.metadata?.songName ?? '-'}
-                {/* Camellia & USAO - Möbius [In Ranked Queue] */}
-              </span>
-            </p>
+            <TwoLineFittedText
+              options={{ maxWidth: vw100 * 0.19, maxHeight: vw100 * 0.044, maxSize: vw100 * 0.02 }}
+            >
+              {title ?? map?.metadata?.songName ?? '-'}
+              {/* Camellia & USAO - Möbius [In Ranked Queue] */}
+            </TwoLineFittedText>
           </div>
           <div className='flex-[0_1_auto] flex flex-col flex-wrap min-h-0 justify-end gap-x-[1.5vw]'>
             <p className='text-[1.2vw]'>

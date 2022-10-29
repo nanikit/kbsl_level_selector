@@ -15,8 +15,8 @@ import { useSyncedScore } from '../hooks/use_synced_score';
 import { TournamentState } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Push_RealtimeScore } from '../services/protos/packets';
-import { useTextFit } from '../hooks/use_text_fit';
 import { useWindowSize } from 'react-use';
+import { TwoLineFittedText } from './two_line_fitted_text';
 
 export default function OneToOneMatchStatus({
   title,
@@ -198,9 +198,6 @@ function CurrentMapCard({
 
   const titleText = title ?? songName;
   const { width: vw100 } = useWindowSize();
-  useTextFit(titleRef, { maxWidth: vw100 * 0.2, maxHeight: vw100 * 0.08, maxSize: vw100 * 0.023 }, [
-    songName,
-  ]);
 
   return (
     <div
@@ -225,13 +222,19 @@ function CurrentMapCard({
       <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
         {!!(titleText || songAuthorName) && (
           <div className='flex flex-col justify-center w-full'>
-            <p ref={titleRef}>
+            <TwoLineFittedText
+              options={{ maxWidth: vw100 * 0.2, maxHeight: vw100 * 0.08, maxSize: vw100 * 0.023 }}
+              className='font-light whitespace-pre-line'
+            >
+              {titleText}
+              {/* Camellia & USAO - Möbius [In Ranked Queue]
+                Camellia & USAO - Möbius [In Ranked Queue] */}
+            </TwoLineFittedText>
+            {/* <p ref={titleRef}>
               <span className='font-light whitespace-pre-line'>
                 {titleText}
-                {/* Camellia & USAO - Möbius [In Ranked Queue]
-                Camellia & USAO - Möbius [In Ranked Queue] */}
               </span>
-            </p>
+            </p> */}
           </div>
         )}
         {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
