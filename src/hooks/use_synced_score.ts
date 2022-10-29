@@ -16,11 +16,7 @@ export function useSyncedScore({ player, score }: { player?: User; score?: Push_
   }, {});
 
   const waitDelay = async (streamDelay?: number) => {
-    let delay = Math.max(0, Math.min(15000, (streamDelay ?? 0) - 34));
-    const seemsNotStreamer = delay > 10000;
-    if (seemsNotStreamer) {
-      delay -= 5000;
-    }
+    const delay = Math.max(0, Math.min(20000, (streamDelay ?? 0) - 167));
     if (delay) {
       await timeout(delay);
     }
