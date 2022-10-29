@@ -45,7 +45,7 @@ const tournamentAtom = atom(
 export function useTournamentAssistant(search: TournamentSearch) {
   const [tournament, dispatch] = useAtom(tournamentAtom);
 
-  const { sendMessage } = useWebSocket(search.server ?? null, {
+  let { sendMessage } = useWebSocket(search.server ?? null, {
     onOpen: () => {
       sendMessage(
         Packet.encode({
@@ -71,6 +71,11 @@ export function useTournamentAssistant(search: TournamentSearch) {
     },
     shouldReconnect: () => true,
   });
+  const send = sendMessage;
+  sendMessage = (message) => {
+    console.log('sendMessage', Packet.decode(message as Uint8Array));
+    send(message);
+  };
 
   return [
     tournament,
