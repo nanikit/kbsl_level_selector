@@ -156,6 +156,7 @@ export function App() {
         </div>
       </div>
       <OneToOneMatchStatus
+        tournament={tournament}
         title={pickedLevel && match.titles[pickedIndex]}
         mapHash={hash}
         goal={Math.ceil((levels.length - matchResult.filter((x) => x === 'banned').length) / 2)}
