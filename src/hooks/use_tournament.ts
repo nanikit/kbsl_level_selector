@@ -78,7 +78,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
       setMatch: async (match: Match) => {
         const players = match.associatedUsers
           ?.map((x) => tournament.users?.find((u) => u.guid === x))
-          .filter((u) => u?.clientType == User_ClientTypes.Player);
+          .filter((u) => u?.clientType === User_ClientTypes.Player);
         sendMessage(
           Packet.encode({
             from: match.leader,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { GiLightSabers } from 'react-icons/gi';
 import { MdRestore } from 'react-icons/md';
@@ -15,6 +15,7 @@ import { useSyncedScore } from '../hooks/use_synced_score';
 import { TournamentState } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Push_RealtimeScore } from '../services/protos/packets';
+import { useTextFit } from '../services/two_line_text_fill';
 
 export default function OneToOneMatchStatus({
   mapHash,
@@ -140,6 +141,7 @@ function getMissText(score?: Push_RealtimeScore): string {
 function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: string }) {
   const [match, saveMatch] = useMatchInformation();
   const [oneToOne, saveOneToOne] = useOneToOneStatus();
+  const titleRef = useRef(null);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -183,6 +185,9 @@ function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: stri
   };
   const coverUrl = revision?.coverURL;
 
+  const maxSize = document.documentElement.clientWidth * 0.02;
+  useTextFit(titleRef, { maxWidth: 260, maxHeight: 100, maxSize }, [songName]);
+
   return (
     <div
       onContextMenu={setTournamentServer}
@@ -205,7 +210,16 @@ function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: stri
       )}
       <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
         {!!(songName || songAuthorName) && (
-          <p className='flex-shrink min-h-0 overflow-hidden text-[2vw]'>{songName}</p>
+          <div className='flex flex-col justify-center w-full font-light'>
+            <p ref={titleRef}>
+              <span>
+                {songName}
+                {/* Camellia & USAO - Möbius [In Ranked Queue]
+                Camellia & USAO - Möbius [In Ranked Queue] */}
+              </span>
+            </p>
+          </div>
+          // <p className='flex-shrink min-h-0 overflow-hidden text-[2vw]'>{songName}</p>
         )}
         {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
       </div>

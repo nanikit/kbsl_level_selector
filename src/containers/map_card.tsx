@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { MatchMapStatus } from '../hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty } from '../services/beatsaver';
+import { useTextFit } from '../services/two_line_text_fill';
 
 export function MapCard({
   title,
@@ -22,6 +23,8 @@ export function MapCard({
   const { versions } = map ?? {};
   const cover = (versions?.find((x) => x.hash === hash) ?? versions?.[versions.length - 1])
     ?.coverURL;
+  const titleRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   let statusCss = 'border-black text-black';
   switch (status) {
@@ -75,8 +78,6 @@ export function MapCard({
     }
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const copyKeyAndPick = (ev: React.MouseEvent) => {
     ev.preventDefault();
     if (!map) {
@@ -94,6 +95,9 @@ export function MapCard({
     }
     onStatusChanged?.('picked');
   };
+
+  const maxSize = document.documentElement.clientWidth * 0.02;
+  useTextFit(titleRef, { maxWidth: 241, maxHeight: 54, maxSize }, [title]);
 
   return (
     <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>
@@ -115,16 +119,21 @@ export function MapCard({
           </>
         )}
         <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
-          <p className='text-[1.2vw] flex-1'>{map?.id ?? ''}</p>
-          <p className='text-[2vw] leading-[2.2vw] inline w-full font-light overflow-hidden max-h-[4.2vw]'>
-            {title ?? map?.metadata?.songName ?? '-'}
-          </p>
-          <div className='flex-[1_1_1.3vw] flex flex-col flex-wrap min-h-[1.3vw] justify-end'>
-            <p className='text-[1.2vw] leading-[1.5vw] mr-[0.5vw] whitespace-nowrap max-w-[13vw] overflow-hidden text-ellipsis'>
-              {map?.metadata?.levelAuthorName ?? ''}
+          <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
+          <div className='flex-1 flex flex-col justify-center text-[2vw] w-full font-light'>
+            <p ref={titleRef}>
+              <span>
+                {title ?? map?.metadata?.songName ?? '-'}
+                {/* Camellia & USAO - Möbius [In Ranked Queue] */}
+              </span>
             </p>
+          </div>
+          <div className='flex-[0_1_auto] flex flex-col flex-wrap min-h-[1.3vw] justify-end gap-x-[1.5vw]'>
             <p className='text-[1.2vw] leading-[1.5vw]'>
               {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
+            </p>
+            <p className='text-[1.2vw] leading-[1.5vw] min-h-[1.5vw] whitespace-nowrap max-w-[20vw] min-w-0 overflow-hidden text-ellipsis'>
+              {map?.metadata?.levelAuthorName ?? ''}
             </p>
           </div>
         </div>
