@@ -45,15 +45,15 @@ export function App() {
           matchResult[i] = 'normal';
         }
       }
-    }
-    const selectedMap = mapQueries[index].data as BeatsaverMap;
-    if (tournament.match && selectedMap) {
-      const match = composeTournamentMatch({
-        selectedLevel: levels[index],
-        selectedMap,
-        existingMatch: tournament.match,
-      });
-      setMatch(match);
+      const selectedMap = mapQueries[index].data as BeatsaverMap;
+      if (tournament.match && selectedMap) {
+        const match = composeTournamentMatch({
+          selectedLevel: levels[index],
+          selectedMap,
+          existingMatch: tournament.match,
+        });
+        setMatch(match);
+      }
     }
     matchResult[index] = status;
     saveMatch({ ...match, lastCursorIndex: index, matchResult });
