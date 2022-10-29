@@ -1,4 +1,5 @@
 import { RefObject, useEffect } from 'react';
+import { useMeasure } from 'react-use';
 
 export function useTextFit(
   ref: RefObject<HTMLElement>,
@@ -7,14 +8,21 @@ export function useTextFit(
 ) {
   const p = ref.current;
   const span = p?.querySelector('span');
-  const { clientHeight, clientWidth } = span ?? {};
   const { maxWidth, maxHeight, maxSize } = options;
+
+  const [spanRef, { width, height }] = useMeasure();
+
+  useEffect(() => {
+    if (span) {
+      spanRef(span);
+    }
+  }, [span]);
 
   useEffect(() => {
     if (p) {
       twoLineTextFill(p, options);
     }
-  }, [clientHeight, clientWidth, maxWidth, maxHeight, maxSize, ...(deps ?? [])]);
+  }, [p, width, height, maxWidth, maxHeight, maxSize, ...(deps ?? [])]);
 }
 
 function twoLineTextFill(
