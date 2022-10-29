@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import { MatchMapStatus } from '../hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty } from '../services/beatsaver';
-import { useTextFit } from '../services/use_text_fit';
+import { useTextFit } from '../hooks/use_text_fit';
+import { useWindowSize } from 'react-use';
 
 export function MapCard({
   title,
@@ -96,8 +97,9 @@ export function MapCard({
     onStatusChanged?.('picked');
   };
 
-  const maxSize = document.documentElement.clientWidth * 0.02;
-  useTextFit(titleRef, { maxWidth: 241, maxHeight: 54, maxSize }, [title]);
+  const { width: vw100 } = useWindowSize();
+  const maxSize = vw100 * 0.02;
+  useTextFit(titleRef, { maxWidth: vw100 * 0.19, maxHeight: vw100 * 0.044, maxSize }, [title]);
 
   return (
     <div className={`w-full h-full p-[0.3vw] rounded-[1.2vw] overflow-hidden ${statusCss}`}>

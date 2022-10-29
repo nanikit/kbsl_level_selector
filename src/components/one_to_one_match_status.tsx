@@ -15,7 +15,8 @@ import { useSyncedScore } from '../hooks/use_synced_score';
 import { TournamentState } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Push_RealtimeScore } from '../services/protos/packets';
-import { useTextFit } from '../services/use_text_fit';
+import { useTextFit } from '../hooks/use_text_fit';
+import { useWindowSize } from 'react-use';
 
 export default function OneToOneMatchStatus({
   title,
@@ -195,9 +196,11 @@ function CurrentMapCard({
   };
   const coverUrl = revision?.coverURL;
 
-  const maxSize = document.documentElement.clientWidth * 0.023;
   const titleText = title ?? songName;
-  useTextFit(titleRef, { maxWidth: 260, maxHeight: 100, maxSize }, [songName]);
+  const { width: vw100 } = useWindowSize();
+  useTextFit(titleRef, { maxWidth: vw100 * 0.2, maxHeight: vw100 * 0.08, maxSize: vw100 * 0.023 }, [
+    songName,
+  ]);
 
   return (
     <div

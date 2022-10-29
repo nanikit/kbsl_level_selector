@@ -6,11 +6,15 @@ export function useTextFit(
   deps?: unknown[],
 ) {
   const p = ref.current;
+  const span = p?.querySelector('span');
+  const { clientHeight, clientWidth } = span ?? {};
+  const { maxWidth, maxHeight, maxSize } = options;
+
   useEffect(() => {
     if (p) {
       twoLineTextFill(p, options);
     }
-  }, [p?.clientHeight, p?.clientWidth, ...(deps ?? [])]);
+  }, [clientHeight, clientWidth, maxWidth, maxHeight, maxSize, ...(deps ?? [])]);
 }
 
 function twoLineTextFill(
