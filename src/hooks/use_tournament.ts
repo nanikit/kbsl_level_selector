@@ -167,7 +167,7 @@ function collectMessage(
     } else if (matchUpdatedEvent && index !== -1) {
       newMatches.splice(index, 1, match);
     } else if (index !== -1) {
-      newMatches.splice(index, 1, match);
+      newMatches.splice(index, 1);
     }
 
     const newState = { ...state, matches: newMatches };
@@ -179,12 +179,12 @@ function collectMessage(
 
     let newUsers = [...state.users];
     const index = state.users.findIndex((x) => x.guid === user.guid);
-    if (matchCreatedEvent && index === -1) {
+    if (userAddedEvent && index === -1) {
       newUsers.push(user);
-    } else if (matchUpdatedEvent && index !== -1) {
+    } else if (userUpdatedEvent && index !== -1) {
       newUsers.splice(index, 1, user);
     } else if (index !== -1) {
-      newUsers.splice(index, 1, user);
+      newUsers.splice(index, 1);
     }
 
     return { ...state, player1: p1, player2: p2, users: newUsers };
@@ -226,14 +226,11 @@ function pickCurrentMatch(tournament: TournamentState) {
     return;
   }
 
-  const relatedMatches = tournament.matches
-    ?.filter((x) => hasPlayer(x, player1) && hasPlayer(x, player2))
-    .sort(
-      (a, b) =>
-        new Date(b.startTime || '1990-01-01').getTime() -
-        new Date(a.startTime || '1990-01-01').getTime(),
-    );
-  return relatedMatches?.[0];
+  const userGuids = tournament.users?.map((u) => u.guid);
+  const relatedMatches = tournament.matches?.filter(
+    (x) => hasPlayer(x, player1) && hasPlayer(x, player2) && userGuids?.includes(x.leader),
+  );
+  return relatedMatches?.[relatedMatches.length - 1];
 }
 
 function hasPlayer(match: Match, player: User) {
