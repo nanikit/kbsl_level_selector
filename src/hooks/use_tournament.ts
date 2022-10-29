@@ -93,10 +93,10 @@ export function useTournamentAssistant(search: TournamentSearch) {
             },
           }).finish(),
         );
-        // I don't know why but if miss it then difficulty doesn't change.
+        // TA is too complicated.
         await timeout(100);
-        // Original client calls this first, but it doesn't change difficulty sometimes.
-        // And sometimes crashes.
+        sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
+        await timeout(400);
         sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
       },
     },
