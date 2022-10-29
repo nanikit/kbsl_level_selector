@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { groupBy } from 'lodash-es';
+import { groupBy, pick } from 'lodash-es';
 import { useEffect } from 'react';
 import { useQueries, useQuery } from 'react-query';
 import OneToOneMatchStatus from './components/one_to_one_match_status';
@@ -156,6 +156,7 @@ export function App() {
         </div>
       </div>
       <OneToOneMatchStatus
+        title={pickedLevel && match.titles[pickedIndex]}
         mapHash={hash}
         goal={Math.ceil((levels.length - matchResult.filter((x) => x === 'banned').length) / 2)}
         p1Win={matchResult?.filter((x) => x === 'p1_win').length}

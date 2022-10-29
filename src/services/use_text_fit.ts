@@ -5,11 +5,12 @@ export function useTextFit(
   options: { maxWidth: number; maxHeight: number; maxSize: number },
   deps?: unknown[],
 ) {
+  const p = ref.current;
   useEffect(() => {
-    if (ref.current) {
-      twoLineTextFill(ref.current, options);
+    if (p) {
+      twoLineTextFill(p, options);
     }
-  }, [ref.current, ...(deps ?? [])]);
+  }, [p?.clientHeight, p?.clientWidth, ...(deps ?? [])]);
 }
 
 function twoLineTextFill(
@@ -26,6 +27,5 @@ function twoLineTextFill(
     textHeight = span.offsetHeight;
     textWidth = span.offsetWidth;
     fontSize = fontSize - 1;
-    console.log(`${fontSize} ${textHeight} ${maxHeight}  ${textWidth} ${maxWidth}`);
   } while ((textHeight > maxHeight || textWidth > maxWidth) && fontSize > 3);
 }

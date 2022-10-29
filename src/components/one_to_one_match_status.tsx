@@ -15,15 +15,17 @@ import { useSyncedScore } from '../hooks/use_synced_score';
 import { TournamentState } from '../hooks/use_tournament';
 import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
 import { Push_RealtimeScore } from '../services/protos/packets';
-import { useTextFit } from '../services/two_line_text_fill';
+import { useTextFit } from '../services/use_text_fit';
 
 export default function OneToOneMatchStatus({
+  title,
   mapHash,
   p1Win,
   p2Win,
   goal,
   tournament,
 }: {
+  title?: string;
   mapHash?: string;
   p1Win?: number;
   p2Win?: number;
@@ -72,7 +74,7 @@ export default function OneToOneMatchStatus({
             saveToLocal({ ...local, hasPlayer1Retry: !local?.hasPlayer1Retry } as OneToOneStatus);
           }}
         />
-        <CurrentMapCard mapData={mapData} hash={mapHash} />
+        <CurrentMapCard title={title} mapData={mapData} hash={mapHash} />
         <Nameplate
           userId={player2}
           win={p2Win}
@@ -138,7 +140,15 @@ function getMissText(score?: Push_RealtimeScore): string {
   return `${(badCuts ?? 0) + (notesMissed ?? 0)}`;
 }
 
-function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: string }) {
+function CurrentMapCard({
+  title,
+  mapData,
+  hash,
+}: {
+  title?: string;
+  mapData?: BeatsaverMap;
+  hash?: string;
+}) {
   const [match, saveMatch] = useMatchInformation();
   const [oneToOne, saveOneToOne] = useOneToOneStatus();
   const titleRef = useRef(null);
@@ -185,7 +195,8 @@ function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: stri
   };
   const coverUrl = revision?.coverURL;
 
-  const maxSize = document.documentElement.clientWidth * 0.02;
+  const maxSize = document.documentElement.clientWidth * 0.023;
+  const titleText = title ?? songName;
   useTextFit(titleRef, { maxWidth: 260, maxHeight: 100, maxSize }, [songName]);
 
   return (
@@ -209,17 +220,16 @@ function CurrentMapCard({ mapData, hash }: { mapData?: BeatsaverMap; hash?: stri
         <GiLightSabers className='text-[4vw]' />
       )}
       <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
-        {!!(songName || songAuthorName) && (
-          <div className='flex flex-col justify-center w-full font-light'>
+        {!!(titleText || songAuthorName) && (
+          <div className='flex flex-col justify-center w-full'>
             <p ref={titleRef}>
-              <span>
-                {songName}
+              <span className='font-light whitespace-pre-line'>
+                {titleText}
                 {/* Camellia & USAO - Möbius [In Ranked Queue]
                 Camellia & USAO - Möbius [In Ranked Queue] */}
               </span>
             </p>
           </div>
-          // <p className='flex-shrink min-h-0 overflow-hidden text-[2vw]'>{songName}</p>
         )}
         {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
       </div>

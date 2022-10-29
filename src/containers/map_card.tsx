@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { MatchMapStatus } from '../hooks/local_storage_hooks';
 import { BeatsaverMap, Difficulty } from '../services/beatsaver';
-import { useTextFit } from '../services/two_line_text_fill';
+import { useTextFit } from '../services/use_text_fit';
 
 export function MapCard({
   title,
@@ -120,7 +120,7 @@ export function MapCard({
         )}
         <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
           <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
-          <div className='flex-1 flex flex-col justify-center text-[2vw] w-full font-light'>
+          <div className='flex-1 flex flex-col justify-center text-[2vw] w-full font-light whitespace-pre-line'>
             <p ref={titleRef}>
               <span>
                 {title ?? map?.metadata?.songName ?? '-'}
@@ -128,11 +128,11 @@ export function MapCard({
               </span>
             </p>
           </div>
-          <div className='flex-[0_1_auto] flex flex-col flex-wrap min-h-[1.3vw] justify-end gap-x-[1.5vw]'>
-            <p className='text-[1.2vw] leading-[1.5vw]'>
+          <div className='flex-[0_1_auto] flex flex-col flex-wrap min-h-0 justify-end gap-x-[1.5vw]'>
+            <p className='text-[1.2vw]'>
               {difficulty ? (difficulty === 'ExpertPlus' ? 'Expert+' : difficulty) : ''}
             </p>
-            <p className='text-[1.2vw] leading-[1.5vw] min-h-[1.5vw] whitespace-nowrap max-w-[20vw] min-w-0 overflow-hidden text-ellipsis'>
+            <p className='text-[1.2vw] whitespace-nowrap max-w-[20vw] min-w-0 overflow-hidden text-ellipsis'>
               {map?.metadata?.levelAuthorName ?? ''}
             </p>
           </div>
