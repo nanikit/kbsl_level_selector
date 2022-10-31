@@ -1,14 +1,25 @@
 import { atom, useAtom } from 'jotai';
 import { uniqBy } from 'lodash-es';
-import useWebSocket from 'react-use-websocket';
-import { Match, User, User_ClientTypes } from '../services/protos/models';
+import useWebSocket, { SendMessage } from 'react-use-websocket';
+import {
+  Match,
+  User,
+  User_ClientTypes,
+  User_DownloadStates,
+  User_PlayStates,
+} from '../services/protos/models';
 import { Packet, Push_RealtimeScore } from '../services/protos/packets';
-import { timeout } from '../services/utils';
 
 export type TournamentSearch = {
   server?: string;
   player1?: string;
   player2?: string;
+};
+
+export type DirectedLevel = {
+  levelId?: string;
+  characteristic?: string;
+  difficulty?: number;
 };
 
 export type TournamentState = {
@@ -18,9 +29,12 @@ export type TournamentState = {
   player2Score?: Push_RealtimeScore;
   matches?: Match[];
   match?: Match;
+  directedLevel?: DirectedLevel;
   users?: User[];
   self?: User;
 };
+
+type CustomMessage = ['setMatch', Match];
 
 const tournamentStateAtom = atom({} as TournamentState);
 const tournamentAtom = atom(
@@ -29,16 +43,12 @@ const tournamentAtom = atom(
     get,
     set,
     input: {
-      packet: Packet;
+      message: Packet | CustomMessage;
       search: TournamentSearch;
       sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
     },
   ) => {
-    const { packet, search, sendMessage } = input;
-    set(
-      tournamentStateAtom,
-      collectMessage(packet, { state: get(tournamentAtom), search, sendMessage }),
-    );
+    set(tournamentStateAtom, collectMessage({ ...input, state: get(tournamentAtom) }));
   },
 );
 
@@ -67,7 +77,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
       const packet = Packet.decode(new Uint8Array(buffer));
 
       console.log(packet);
-      dispatch({ packet, search, sendMessage });
+      dispatch({ message: packet, search, sendMessage });
     },
     shouldReconnect: () => true,
   });
@@ -80,41 +90,28 @@ export function useTournamentAssistant(search: TournamentSearch) {
   return [
     tournament,
     {
-      setMatch: async (match: Match) => {
-        const players = match.associatedUsers
-          ?.map((x) => tournament.users?.find((u) => u.guid === x))
-          .filter((u) => u?.clientType === User_ClientTypes.Player);
-        sendMessage(
-          Packet.encode({
-            from: match.leader,
-            forwardingPacket: {
-              forwardTo: players?.flatMap((p) => (p?.guid ? [p.guid] : [])),
-              packet: { command: { loadSong: { levelId: match.selectedLevel?.levelId } } },
-            },
-          }).finish(),
-        );
-        // TA is too complicated.
-        await timeout(100);
-        sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
-        await timeout(400);
-        sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
+      setMatch: (match: Match) => {
+        dispatch({ message: ['setMatch', match], search, sendMessage });
       },
     },
   ] as const;
 }
 
-function collectMessage(
-  message: Packet,
-  {
-    state,
-    search,
-    sendMessage,
-  }: {
-    state: TournamentState;
-    search: TournamentSearch;
-    sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
-  },
-): TournamentState {
+function collectMessage({
+  message,
+  state,
+  search,
+  sendMessage,
+}: {
+  message: Packet | CustomMessage;
+  state: TournamentState;
+  search: TournamentSearch;
+  sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
+}): TournamentState {
+  if (Array.isArray(message)) {
+    return collectCustomMessage({ message, state, sendMessage });
+  }
+
   const { player1, player2 } = search;
   const { response, event, push } = message;
   const { connect } = response ?? {};
@@ -161,18 +158,22 @@ function collectMessage(
     }
 
     let newMatches = [...state.matches];
+    let directedLevel = undefined;
     const index = state.matches.findIndex((x) => x.guid === match.guid);
     if (matchCreatedEvent && index === -1) {
       newMatches.push(match);
     } else if (matchUpdatedEvent && index !== -1) {
       newMatches.splice(index, 1, match);
+      if (hasSameLevel(match, state.directedLevel)) {
+        directedLevel = state.directedLevel;
+      }
     } else if (index !== -1) {
       newMatches.splice(index, 1);
     }
 
     const newState = { ...state, matches: newMatches };
     const currentMatch = pickCurrentMatch(newState);
-    return { ...newState, match: currentMatch };
+    return { ...newState, match: currentMatch, directedLevel };
   } else if (user && state.users) {
     const p1 = user.userId === player1 ? user : state.player1;
     const p2 = user.userId === player2 ? user : state.player2;
@@ -183,6 +184,7 @@ function collectMessage(
       newUsers.push(user);
     } else if (userUpdatedEvent && index !== -1) {
       newUsers.splice(index, 1, user);
+      correctDifficultyIfThisIsLeader({ state, user, sendMessage });
     } else if (index !== -1) {
       newUsers.splice(index, 1);
     }
@@ -199,6 +201,59 @@ function collectMessage(
   }
 
   return state;
+}
+
+function correctDifficultyIfThisIsLeader({
+  state,
+  user,
+  sendMessage,
+}: {
+  state: TournamentState;
+  user: User;
+  sendMessage: SendMessage;
+}) {
+  if (
+    state.match &&
+    state.directedLevel &&
+    user.downloadState === User_DownloadStates.Downloaded &&
+    user.playState === User_PlayStates.Waiting
+  ) {
+    sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match: state.match } } }).finish());
+  }
+}
+
+function collectCustomMessage({
+  message,
+  state,
+  sendMessage,
+}: {
+  message: CustomMessage;
+  state: TournamentState;
+  sendMessage: SendMessage;
+}) {
+  const match = message[1];
+  const players = match.associatedUsers
+    ?.map((x) => state.users?.find((u) => u.guid === x))
+    .filter((u) => u?.clientType === User_ClientTypes.Player);
+  sendMessage(
+    Packet.encode({
+      from: match.leader,
+      forwardingPacket: {
+        forwardTo: players?.flatMap((p) => (p?.guid ? [p.guid] : [])),
+        packet: { command: { loadSong: { levelId: match.selectedLevel?.levelId } } },
+      },
+    }).finish(),
+  );
+  sendMessage(Packet.encode({ event: { matchUpdatedEvent: { match } } }).finish());
+  return {
+    ...state,
+    match,
+    directedLevel: {
+      levelId: match.selectedLevel?.levelId,
+      characteristic: match.selectedCharacteristic?.serializedName,
+      difficulty: match.selectedDifficulty,
+    },
+  };
 }
 
 function associateMe(
@@ -239,4 +294,16 @@ function hasPlayer(match: Match, player: User) {
     return false;
   }
   return match.associatedUsers?.includes(guid);
+}
+
+function hasSameLevel(match?: Match, directedLevel?: DirectedLevel): boolean {
+  if (!match || !directedLevel) {
+    return false;
+  }
+  const { levelId, characteristic, difficulty } = directedLevel;
+  return (
+    match.selectedLevel?.levelId === levelId &&
+    match.selectedCharacteristic?.serializedName === characteristic &&
+    match.selectedDifficulty === difficulty
+  );
 }
