@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'esamanru';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff')
+    format('woff');
+}
+
+@font-face {
+  font-family: 'Maplestory';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff')
+    format('woff');
+}
+
 body {
-  font-family: 'Pretendard Variable', NanumGothic, sans-serif;
+  font-family: esamanru, sans-serif;
   user-select: none;
 }
 

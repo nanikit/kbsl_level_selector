@@ -111,7 +111,7 @@ export function App() {
   return (
     <main>
       <div className='bg-[url(/bg.png)] w-full aspect-[16/9] bg-cover flex flex-col'>
-        <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center font-[esamanru,"Pretendard_Variable"] pt-2 text-white'>
+        <div className='flex-[28_1_0] flex flex-col flex-nowrap items-center pt-2 text-white'>
           <p className='text-[2vw] mt-7'>{host}</p>
           <p className='text-[3.5vw] leading-[3.5vw] font-bold'>
             {title || (

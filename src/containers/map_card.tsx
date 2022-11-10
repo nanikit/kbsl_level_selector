@@ -117,7 +117,7 @@ export function MapCard({
             <img src={cover} className='relative h-full aspect-square object-cover' />
           </>
         )}
-        <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start font-[esamanru,"Pretendard_Variable"]'>
+        <div className='relative px-[2%] py-[1%] h-full flex flex-1 flex-col items-start'>
           <p className='text-[1.2vw]'>{map?.id ?? ''}</p>
           <div className='flex-1 flex flex-col justify-center text-[2vw] w-full font-light whitespace-pre-line'>
             <TwoLineFittedText

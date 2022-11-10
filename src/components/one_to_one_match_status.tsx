@@ -60,9 +60,9 @@ export default function OneToOneMatchStatus({
   }, [player1, player2, tournamentServer]);
 
   return (
-    <div className='mx-[5vmin] flex flex-col justify-end'>
+    <div className="mx-[5vmin] flex flex-col justify-end">
       <RealtimeScore {...tournament} />
-      <div className='h-[10.417vw] flex flex-row flex-nowrap justify-between'>
+      <div className="h-[10.417vw] flex flex-row flex-nowrap justify-between">
         <Nameplate
           userId={player1}
           win={p1Win}
@@ -104,22 +104,22 @@ function RealtimeScore(tournament: TournamentState) {
   const isPlayer1Super = hasScoreBoth && accuracy1 >= accuracy2;
   const isPlayer2Super = hasScoreBoth && accuracy1 <= accuracy2;
   return (
-    <div className='h-[6vw] pb-[1.3vw] flex flex-row flex-nowrap items-end justify-center font-[esamanru] text-white text-outshadow'>
-      <div className='flex flex-col items-end'>
-        <p className='text-[1.5vw] leading-[1.5vw]'>{getMissText(player1)}</p>
+    <div className="h-[6vw] pb-[1.3vw] flex flex-row flex-nowrap items-end justify-center text-white text-outshadow">
+      <div className="flex flex-col items-end">
+        <p className="text-[1.5vw] leading-[1.5vw]">{getMissText(player1)}</p>
         <p
-          className={`leading-[3vw] w-[15vw] font-[Consolas] text-right transition-all ${
+          className={`leading-[3vw] w-[15vw] font-[Consolas,monospace] text-right transition-all ${
             isPlayer1Super ? 'text-[4vw]' : 'text-[3vw]'
           }`}
         >
           {accuracy1 ? `${(accuracy1 * 100).toFixed(2)}%` : ''}
         </p>
       </div>
-      <span className='w-[1vw]' />
-      <div className='flex flex-col items-start'>
-        <p className='text-[1.5vw] leading-[1.5vw]'>{getMissText(player2)}</p>
+      <span className="w-[1vw]" />
+      <div className="flex flex-col items-start">
+        <p className="text-[1.5vw] leading-[1.5vw]">{getMissText(player2)}</p>
         <p
-          className={`leading-[3vw] w-[15vw] font-[Consolas] transition-all ${
+          className={`leading-[3vw] w-[15vw] font-[Consolas,monospace] transition-all ${
             isPlayer2Super ? 'text-[4vw]' : 'text-[3vw]'
           }`}
         >
@@ -214,30 +214,25 @@ function CurrentMapCard({
       {coverUrl ? (
         <img
           src={coverUrl}
-          className='object-cover absolute top-0 left-0 w-full h-full brightness-75'
+          className="object-cover absolute top-0 left-0 w-full h-full brightness-75"
         />
       ) : (
-        <GiLightSabers className='text-[4vw]' />
+        <GiLightSabers className="text-[4vw]" />
       )}
-      <div className='absolute w-full h-full flex flex-col justify-center font-[esamanru]'>
+      <div className="absolute w-full h-full flex flex-col justify-center">
         {!!(titleText || songAuthorName) && (
-          <div className='flex flex-col justify-center w-full'>
+          <div className="flex flex-col justify-center w-full">
             <TwoLineFittedText
               options={{ maxWidth: vw100 * 0.2, maxHeight: vw100 * 0.08, maxSize: vw100 * 0.023 }}
-              className='font-light whitespace-pre-line'
+              className="font-light whitespace-pre-line"
             >
               {titleText}
               {/* Camellia & USAO - Möbius [In Ranked Queue]
                 Camellia & USAO - Möbius [In Ranked Queue] */}
             </TwoLineFittedText>
-            {/* <p ref={titleRef}>
-              <span className='font-light whitespace-pre-line'>
-                {titleText}
-              </span>
-            </p> */}
           </div>
         )}
-        {!!songAuthorName && <p className='text-[1vw] font-light'>by {songAuthorName}</p>}
+        {!!songAuthorName && <p className="text-[1vw] font-light">by {songAuthorName}</p>}
       </div>
     </div>
   );
@@ -287,11 +282,11 @@ function Nameplate({
   return (
     <div className={`flex-[1.7] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
       <img
-        className='h-full aspect-square border-[0.15vw] border-violet-900 shadow-xl rounded-[2vw]'
+        className="h-full aspect-square border-[0.15vw] border-violet-900 shadow-xl rounded-[2vw]"
         src={userId ? pfpUrl : '/unknown.jpg'}
         onClick={onPfpClick}
       />
-      <span className='w-4' />
+      <span className="w-4" />
       <div className={`flex-[1_1_4rem] h-2/3 flex flex-col ${reverse ? 'items-end' : ''}`}>
         <div className={'h-1/2 flex ' + (reverse ? 'flex-row-reverse' : 'flex-row')}>
           <div
@@ -313,7 +308,7 @@ function Nameplate({
               ),
             )}
           </div>
-          <div className='text-white flex items-center justify-center text-[2vw]' onClick={onRetry}>
+          <div className="text-white flex items-center justify-center text-[2vw]" onClick={onRetry}>
             {hasRetry ? <MdRestore /> : <SiYelp />}
           </div>
         </div>
@@ -322,7 +317,7 @@ function Nameplate({
             !reverse ? 'bg-red-300 b-9' : 'bg-blue-300 a-9 flex-row-reverse'
           }`}
         >
-          <p className='font-[Maplestory] text-[2vw] font-extrabold text-white text-outshadow '>
+          <p className="font-[Maplestory] text-[2vw] font-extrabold text-white text-outshadow ">
             {name}
           </p>
         </div>
