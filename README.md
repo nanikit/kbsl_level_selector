@@ -1,10 +1,6 @@
 # 전자칼잽이 대전 맵 풀 화면
 
-![OBS interacting window](docs/preview.webp)
-
-## 설치
-
-이사만루체, 메이플스토리 폰트가 필요합니다.
+[미리보기](https://kbsl-level-selector.pages.dev)
 
 ## 사용법
 
