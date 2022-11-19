@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "protobufjs/minimal": "https://esm.sh/protobufjs@7.1.2",
+    "long": "npm:long"
+  }
+}
