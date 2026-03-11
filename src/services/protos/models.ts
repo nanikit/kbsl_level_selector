@@ -198,7 +198,9 @@ export enum PlayerSpecificSettings_PlayerOptions {
   UNRECOGNIZED = -1,
 }
 
-export function playerSpecificSettings_PlayerOptionsFromJSON(object: any): PlayerSpecificSettings_PlayerOptions {
+export function playerSpecificSettings_PlayerOptionsFromJSON(
+  object: any,
+): PlayerSpecificSettings_PlayerOptions {
   switch (object) {
     case 0:
     case "None":
@@ -240,7 +242,9 @@ export function playerSpecificSettings_PlayerOptionsFromJSON(object: any): Playe
   }
 }
 
-export function playerSpecificSettings_PlayerOptionsToJSON(object: PlayerSpecificSettings_PlayerOptions): string {
+export function playerSpecificSettings_PlayerOptionsToJSON(
+  object: PlayerSpecificSettings_PlayerOptions,
+): string {
   switch (object) {
     case PlayerSpecificSettings_PlayerOptions.None:
       return "None";
@@ -634,7 +638,9 @@ export const Characteristic = {
   fromJSON(object: any): Characteristic {
     return {
       serializedName: isSet(object.serializedName) ? String(object.serializedName) : "",
-      difficulties: Array.isArray(object?.difficulties) ? object.difficulties.map((e: any) => Number(e)) : [],
+      difficulties: Array.isArray(object?.difficulties)
+        ? object.difficulties.map((e: any) => Number(e))
+        : [],
     };
   },
 
@@ -709,7 +715,9 @@ export const Beatmap = {
     return {
       name: isSet(object.name) ? String(object.name) : "",
       levelId: isSet(object.levelId) ? String(object.levelId) : "",
-      characteristic: isSet(object.characteristic) ? Characteristic.fromJSON(object.characteristic) : undefined,
+      characteristic: isSet(object.characteristic)
+        ? Characteristic.fromJSON(object.characteristic)
+        : undefined,
       difficulty: isSet(object.difficulty) ? Number(object.difficulty) : 0,
     };
   },
@@ -719,7 +727,9 @@ export const Beatmap = {
     message.name !== undefined && (obj.name = message.name);
     message.levelId !== undefined && (obj.levelId = message.levelId);
     message.characteristic !== undefined &&
-      (obj.characteristic = message.characteristic ? Characteristic.toJSON(message.characteristic) : undefined);
+      (obj.characteristic = message.characteristic
+        ? Characteristic.toJSON(message.characteristic)
+        : undefined);
     message.difficulty !== undefined && (obj.difficulty = Math.round(message.difficulty));
     return obj;
   },
@@ -728,9 +738,10 @@ export const Beatmap = {
     const message = createBaseBeatmap();
     message.name = object.name ?? "";
     message.levelId = object.levelId ?? "";
-    message.characteristic = (object.characteristic !== undefined && object.characteristic !== null)
-      ? Characteristic.fromPartial(object.characteristic)
-      : undefined;
+    message.characteristic =
+      object.characteristic !== undefined && object.characteristic !== null
+        ? Characteristic.fromPartial(object.characteristic)
+        : undefined;
     message.difficulty = object.difficulty ?? 0;
     return message;
   },
@@ -802,7 +813,9 @@ export const PreviewBeatmapLevel = {
     message.levelId !== undefined && (obj.levelId = message.levelId);
     message.name !== undefined && (obj.name = message.name);
     if (message.characteristics) {
-      obj.characteristics = message.characteristics.map((e) => e ? Characteristic.toJSON(e) : undefined);
+      obj.characteristics = message.characteristics.map((e) =>
+        e ? Characteristic.toJSON(e) : undefined,
+      );
     } else {
       obj.characteristics = [];
     }
@@ -810,11 +823,14 @@ export const PreviewBeatmapLevel = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<PreviewBeatmapLevel>, I>>(object: I): PreviewBeatmapLevel {
+  fromPartial<I extends Exact<DeepPartial<PreviewBeatmapLevel>, I>>(
+    object: I,
+  ): PreviewBeatmapLevel {
     const message = createBasePreviewBeatmapLevel();
     message.levelId = object.levelId ?? "";
     message.name = object.name ?? "";
-    message.characteristics = object.characteristics?.map((e) => Characteristic.fromPartial(e)) || [];
+    message.characteristics =
+      object.characteristics?.map((e) => Characteristic.fromPartial(e)) || [];
     message.loaded = object.loaded ?? false;
     return message;
   },
@@ -851,12 +867,15 @@ export const GameplayModifiers = {
   },
 
   fromJSON(object: any): GameplayModifiers {
-    return { options: isSet(object.options) ? gameplayModifiers_GameOptionsFromJSON(object.options) : 0 };
+    return {
+      options: isSet(object.options) ? gameplayModifiers_GameOptionsFromJSON(object.options) : 0,
+    };
   },
 
   toJSON(message: GameplayModifiers): unknown {
     const obj: any = {};
-    message.options !== undefined && (obj.options = gameplayModifiers_GameOptionsToJSON(message.options));
+    message.options !== undefined &&
+      (obj.options = gameplayModifiers_GameOptionsToJSON(message.options));
     return obj;
   },
 
@@ -899,7 +918,10 @@ export const PlayerSpecificSettings = {
     if (message.options !== undefined && message.options !== 0) {
       writer.uint32(48).int32(message.options);
     }
-    if (message.noteJumpDurationTypeSettings !== undefined && message.noteJumpDurationTypeSettings !== 0) {
+    if (
+      message.noteJumpDurationTypeSettings !== undefined &&
+      message.noteJumpDurationTypeSettings !== 0
+    ) {
       writer.uint32(56).int32(message.noteJumpDurationTypeSettings);
     }
     return writer;
@@ -945,12 +967,22 @@ export const PlayerSpecificSettings = {
     return {
       playerHeight: isSet(object.playerHeight) ? Number(object.playerHeight) : 0,
       sfxVolume: isSet(object.sfxVolume) ? Number(object.sfxVolume) : 0,
-      saberTrailIntensity: isSet(object.saberTrailIntensity) ? Number(object.saberTrailIntensity) : 0,
-      noteJumpStartBeatOffset: isSet(object.noteJumpStartBeatOffset) ? Number(object.noteJumpStartBeatOffset) : 0,
-      noteJumpFixedDuration: isSet(object.noteJumpFixedDuration) ? Number(object.noteJumpFixedDuration) : 0,
-      options: isSet(object.options) ? playerSpecificSettings_PlayerOptionsFromJSON(object.options) : 0,
+      saberTrailIntensity: isSet(object.saberTrailIntensity)
+        ? Number(object.saberTrailIntensity)
+        : 0,
+      noteJumpStartBeatOffset: isSet(object.noteJumpStartBeatOffset)
+        ? Number(object.noteJumpStartBeatOffset)
+        : 0,
+      noteJumpFixedDuration: isSet(object.noteJumpFixedDuration)
+        ? Number(object.noteJumpFixedDuration)
+        : 0,
+      options: isSet(object.options)
+        ? playerSpecificSettings_PlayerOptionsFromJSON(object.options)
+        : 0,
       noteJumpDurationTypeSettings: isSet(object.noteJumpDurationTypeSettings)
-        ? playerSpecificSettings_NoteJumpDurationTypeSettingsFromJSON(object.noteJumpDurationTypeSettings)
+        ? playerSpecificSettings_NoteJumpDurationTypeSettingsFromJSON(
+            object.noteJumpDurationTypeSettings,
+          )
         : 0,
     };
   },
@@ -959,10 +991,14 @@ export const PlayerSpecificSettings = {
     const obj: any = {};
     message.playerHeight !== undefined && (obj.playerHeight = message.playerHeight);
     message.sfxVolume !== undefined && (obj.sfxVolume = message.sfxVolume);
-    message.saberTrailIntensity !== undefined && (obj.saberTrailIntensity = message.saberTrailIntensity);
-    message.noteJumpStartBeatOffset !== undefined && (obj.noteJumpStartBeatOffset = message.noteJumpStartBeatOffset);
-    message.noteJumpFixedDuration !== undefined && (obj.noteJumpFixedDuration = message.noteJumpFixedDuration);
-    message.options !== undefined && (obj.options = playerSpecificSettings_PlayerOptionsToJSON(message.options));
+    message.saberTrailIntensity !== undefined &&
+      (obj.saberTrailIntensity = message.saberTrailIntensity);
+    message.noteJumpStartBeatOffset !== undefined &&
+      (obj.noteJumpStartBeatOffset = message.noteJumpStartBeatOffset);
+    message.noteJumpFixedDuration !== undefined &&
+      (obj.noteJumpFixedDuration = message.noteJumpFixedDuration);
+    message.options !== undefined &&
+      (obj.options = playerSpecificSettings_PlayerOptionsToJSON(message.options));
     message.noteJumpDurationTypeSettings !== undefined &&
       (obj.noteJumpDurationTypeSettings = playerSpecificSettings_NoteJumpDurationTypeSettingsToJSON(
         message.noteJumpDurationTypeSettings,
@@ -970,7 +1006,9 @@ export const PlayerSpecificSettings = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<PlayerSpecificSettings>, I>>(object: I): PlayerSpecificSettings {
+  fromPartial<I extends Exact<DeepPartial<PlayerSpecificSettings>, I>>(
+    object: I,
+  ): PlayerSpecificSettings {
     const message = createBasePlayerSpecificSettings();
     message.playerHeight = object.playerHeight ?? 0;
     message.sfxVolume = object.sfxVolume ?? 0;
@@ -1028,7 +1066,9 @@ export const GameplayParameters = {
   fromJSON(object: any): GameplayParameters {
     return {
       beatmap: isSet(object.beatmap) ? Beatmap.fromJSON(object.beatmap) : undefined,
-      playerSettings: isSet(object.playerSettings) ? PlayerSpecificSettings.fromJSON(object.playerSettings) : undefined,
+      playerSettings: isSet(object.playerSettings)
+        ? PlayerSpecificSettings.fromJSON(object.playerSettings)
+        : undefined,
       gameplayModifiers: isSet(object.gameplayModifiers)
         ? GameplayModifiers.fromJSON(object.gameplayModifiers)
         : undefined,
@@ -1037,26 +1077,33 @@ export const GameplayParameters = {
 
   toJSON(message: GameplayParameters): unknown {
     const obj: any = {};
-    message.beatmap !== undefined && (obj.beatmap = message.beatmap ? Beatmap.toJSON(message.beatmap) : undefined);
+    message.beatmap !== undefined &&
+      (obj.beatmap = message.beatmap ? Beatmap.toJSON(message.beatmap) : undefined);
     message.playerSettings !== undefined &&
-      (obj.playerSettings = message.playerSettings ? PlayerSpecificSettings.toJSON(message.playerSettings) : undefined);
-    message.gameplayModifiers !== undefined && (obj.gameplayModifiers = message.gameplayModifiers
-      ? GameplayModifiers.toJSON(message.gameplayModifiers)
-      : undefined);
+      (obj.playerSettings = message.playerSettings
+        ? PlayerSpecificSettings.toJSON(message.playerSettings)
+        : undefined);
+    message.gameplayModifiers !== undefined &&
+      (obj.gameplayModifiers = message.gameplayModifiers
+        ? GameplayModifiers.toJSON(message.gameplayModifiers)
+        : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<GameplayParameters>, I>>(object: I): GameplayParameters {
     const message = createBaseGameplayParameters();
-    message.beatmap = (object.beatmap !== undefined && object.beatmap !== null)
-      ? Beatmap.fromPartial(object.beatmap)
-      : undefined;
-    message.playerSettings = (object.playerSettings !== undefined && object.playerSettings !== null)
-      ? PlayerSpecificSettings.fromPartial(object.playerSettings)
-      : undefined;
-    message.gameplayModifiers = (object.gameplayModifiers !== undefined && object.gameplayModifiers !== null)
-      ? GameplayModifiers.fromPartial(object.gameplayModifiers)
-      : undefined;
+    message.beatmap =
+      object.beatmap !== undefined && object.beatmap !== null
+        ? Beatmap.fromPartial(object.beatmap)
+        : undefined;
+    message.playerSettings =
+      object.playerSettings !== undefined && object.playerSettings !== null
+        ? PlayerSpecificSettings.fromPartial(object.playerSettings)
+        : undefined;
+    message.gameplayModifiers =
+      object.gameplayModifiers !== undefined && object.gameplayModifiers !== null
+        ? GameplayModifiers.fromPartial(object.gameplayModifiers)
+        : undefined;
     return message;
   },
 };
@@ -1098,7 +1145,10 @@ export const Team = {
   },
 
   fromJSON(object: any): Team {
-    return { id: isSet(object.id) ? String(object.id) : "", name: isSet(object.name) ? String(object.name) : "" };
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      name: isSet(object.name) ? String(object.name) : "",
+    };
   },
 
   toJSON(message: Team): unknown {
@@ -1117,7 +1167,14 @@ export const Team = {
 };
 
 function createBaseServerSettings(): ServerSettings {
-  return { serverName: "", password: "", enableTeams: false, teams: [], scoreUpdateFrequency: 0, bannedMods: [] };
+  return {
+    serverName: "",
+    password: "",
+    enableTeams: false,
+    teams: [],
+    scoreUpdateFrequency: 0,
+    bannedMods: [],
+  };
 }
 
 export const ServerSettings = {
@@ -1186,8 +1243,12 @@ export const ServerSettings = {
       password: isSet(object.password) ? String(object.password) : "",
       enableTeams: isSet(object.enableTeams) ? Boolean(object.enableTeams) : false,
       teams: Array.isArray(object?.teams) ? object.teams.map((e: any) => Team.fromJSON(e)) : [],
-      scoreUpdateFrequency: isSet(object.scoreUpdateFrequency) ? Number(object.scoreUpdateFrequency) : 0,
-      bannedMods: Array.isArray(object?.bannedMods) ? object.bannedMods.map((e: any) => String(e)) : [],
+      scoreUpdateFrequency: isSet(object.scoreUpdateFrequency)
+        ? Number(object.scoreUpdateFrequency)
+        : 0,
+      bannedMods: Array.isArray(object?.bannedMods)
+        ? object.bannedMods.map((e: any) => String(e))
+        : [],
     };
   },
 
@@ -1197,11 +1258,12 @@ export const ServerSettings = {
     message.password !== undefined && (obj.password = message.password);
     message.enableTeams !== undefined && (obj.enableTeams = message.enableTeams);
     if (message.teams) {
-      obj.teams = message.teams.map((e) => e ? Team.toJSON(e) : undefined);
+      obj.teams = message.teams.map((e) => (e ? Team.toJSON(e) : undefined));
     } else {
       obj.teams = [];
     }
-    message.scoreUpdateFrequency !== undefined && (obj.scoreUpdateFrequency = Math.round(message.scoreUpdateFrequency));
+    message.scoreUpdateFrequency !== undefined &&
+      (obj.scoreUpdateFrequency = Math.round(message.scoreUpdateFrequency));
     if (message.bannedMods) {
       obj.bannedMods = message.bannedMods.map((e) => e);
     } else {
@@ -1256,14 +1318,16 @@ export const SongList = {
 
   fromJSON(object: any): SongList {
     return {
-      levels: Array.isArray(object?.levels) ? object.levels.map((e: any) => PreviewBeatmapLevel.fromJSON(e)) : [],
+      levels: Array.isArray(object?.levels)
+        ? object.levels.map((e: any) => PreviewBeatmapLevel.fromJSON(e))
+        : [],
     };
   },
 
   toJSON(message: SongList): unknown {
     const obj: any = {};
     if (message.levels) {
-      obj.levels = message.levels.map((e) => e ? PreviewBeatmapLevel.toJSON(e) : undefined);
+      obj.levels = message.levels.map((e) => (e ? PreviewBeatmapLevel.toJSON(e) : undefined));
     } else {
       obj.levels = [];
     }
@@ -1389,7 +1453,9 @@ export const User = {
       clientType: isSet(object.clientType) ? user_ClientTypesFromJSON(object.clientType) : 0,
       team: isSet(object.team) ? Team.fromJSON(object.team) : undefined,
       playState: isSet(object.playState) ? user_PlayStatesFromJSON(object.playState) : 0,
-      downloadState: isSet(object.downloadState) ? user_DownloadStatesFromJSON(object.downloadState) : 0,
+      downloadState: isSet(object.downloadState)
+        ? user_DownloadStatesFromJSON(object.downloadState)
+        : 0,
       modList: Array.isArray(object?.modList) ? object.modList.map((e: any) => String(e)) : [],
       streamScreenCoordinates: isSet(object.streamScreenCoordinates)
         ? User_Point.fromJSON(object.streamScreenCoordinates)
@@ -1404,20 +1470,24 @@ export const User = {
     message.guid !== undefined && (obj.guid = message.guid);
     message.name !== undefined && (obj.name = message.name);
     message.userId !== undefined && (obj.userId = message.userId);
-    message.clientType !== undefined && (obj.clientType = user_ClientTypesToJSON(message.clientType));
+    message.clientType !== undefined &&
+      (obj.clientType = user_ClientTypesToJSON(message.clientType));
     message.team !== undefined && (obj.team = message.team ? Team.toJSON(message.team) : undefined);
     message.playState !== undefined && (obj.playState = user_PlayStatesToJSON(message.playState));
-    message.downloadState !== undefined && (obj.downloadState = user_DownloadStatesToJSON(message.downloadState));
+    message.downloadState !== undefined &&
+      (obj.downloadState = user_DownloadStatesToJSON(message.downloadState));
     if (message.modList) {
       obj.modList = message.modList.map((e) => e);
     } else {
       obj.modList = [];
     }
-    message.streamScreenCoordinates !== undefined && (obj.streamScreenCoordinates = message.streamScreenCoordinates
-      ? User_Point.toJSON(message.streamScreenCoordinates)
-      : undefined);
+    message.streamScreenCoordinates !== undefined &&
+      (obj.streamScreenCoordinates = message.streamScreenCoordinates
+        ? User_Point.toJSON(message.streamScreenCoordinates)
+        : undefined);
     message.streamDelayMs !== undefined && (obj.streamDelayMs = Math.round(message.streamDelayMs));
-    message.streamSyncStartMs !== undefined && (obj.streamSyncStartMs = Math.round(message.streamSyncStartMs));
+    message.streamSyncStartMs !== undefined &&
+      (obj.streamSyncStartMs = Math.round(message.streamSyncStartMs));
     return obj;
   },
 
@@ -1427,12 +1497,13 @@ export const User = {
     message.name = object.name ?? "";
     message.userId = object.userId ?? "";
     message.clientType = object.clientType ?? 0;
-    message.team = (object.team !== undefined && object.team !== null) ? Team.fromPartial(object.team) : undefined;
+    message.team =
+      object.team !== undefined && object.team !== null ? Team.fromPartial(object.team) : undefined;
     message.playState = object.playState ?? 0;
     message.downloadState = object.downloadState ?? 0;
     message.modList = object.modList?.map((e) => e) || [];
     message.streamScreenCoordinates =
-      (object.streamScreenCoordinates !== undefined && object.streamScreenCoordinates !== null)
+      object.streamScreenCoordinates !== undefined && object.streamScreenCoordinates !== null
         ? User_Point.fromPartial(object.streamScreenCoordinates)
         : undefined;
     message.streamDelayMs = object.streamDelayMs ?? 0;
@@ -1575,9 +1646,13 @@ export const Match = {
   fromJSON(object: any): Match {
     return {
       guid: isSet(object.guid) ? String(object.guid) : "",
-      associatedUsers: Array.isArray(object?.associatedUsers) ? object.associatedUsers.map((e: any) => String(e)) : [],
+      associatedUsers: Array.isArray(object?.associatedUsers)
+        ? object.associatedUsers.map((e: any) => String(e))
+        : [],
       leader: isSet(object.leader) ? String(object.leader) : "",
-      selectedLevel: isSet(object.selectedLevel) ? PreviewBeatmapLevel.fromJSON(object.selectedLevel) : undefined,
+      selectedLevel: isSet(object.selectedLevel)
+        ? PreviewBeatmapLevel.fromJSON(object.selectedLevel)
+        : undefined,
       selectedCharacteristic: isSet(object.selectedCharacteristic)
         ? Characteristic.fromJSON(object.selectedCharacteristic)
         : undefined,
@@ -1596,11 +1671,15 @@ export const Match = {
     }
     message.leader !== undefined && (obj.leader = message.leader);
     message.selectedLevel !== undefined &&
-      (obj.selectedLevel = message.selectedLevel ? PreviewBeatmapLevel.toJSON(message.selectedLevel) : undefined);
-    message.selectedCharacteristic !== undefined && (obj.selectedCharacteristic = message.selectedCharacteristic
-      ? Characteristic.toJSON(message.selectedCharacteristic)
-      : undefined);
-    message.selectedDifficulty !== undefined && (obj.selectedDifficulty = Math.round(message.selectedDifficulty));
+      (obj.selectedLevel = message.selectedLevel
+        ? PreviewBeatmapLevel.toJSON(message.selectedLevel)
+        : undefined);
+    message.selectedCharacteristic !== undefined &&
+      (obj.selectedCharacteristic = message.selectedCharacteristic
+        ? Characteristic.toJSON(message.selectedCharacteristic)
+        : undefined);
+    message.selectedDifficulty !== undefined &&
+      (obj.selectedDifficulty = Math.round(message.selectedDifficulty));
     message.startTime !== undefined && (obj.startTime = message.startTime);
     return obj;
   },
@@ -1610,11 +1689,12 @@ export const Match = {
     message.guid = object.guid ?? "";
     message.associatedUsers = object.associatedUsers?.map((e) => e) || [];
     message.leader = object.leader ?? "";
-    message.selectedLevel = (object.selectedLevel !== undefined && object.selectedLevel !== null)
-      ? PreviewBeatmapLevel.fromPartial(object.selectedLevel)
-      : undefined;
+    message.selectedLevel =
+      object.selectedLevel !== undefined && object.selectedLevel !== null
+        ? PreviewBeatmapLevel.fromPartial(object.selectedLevel)
+        : undefined;
     message.selectedCharacteristic =
-      (object.selectedCharacteristic !== undefined && object.selectedCharacteristic !== null)
+      object.selectedCharacteristic !== undefined && object.selectedCharacteristic !== null
         ? Characteristic.fromPartial(object.selectedCharacteristic)
         : undefined;
     message.selectedDifficulty = object.selectedDifficulty ?? 0;
@@ -1708,7 +1788,9 @@ export const QualifierEvent = {
       qualifierMaps: Array.isArray(object?.qualifierMaps)
         ? object.qualifierMaps.map((e: any) => GameplayParameters.fromJSON(e))
         : [],
-      sendScoresToInfoChannel: isSet(object.sendScoresToInfoChannel) ? Boolean(object.sendScoresToInfoChannel) : false,
+      sendScoresToInfoChannel: isSet(object.sendScoresToInfoChannel)
+        ? Boolean(object.sendScoresToInfoChannel)
+        : false,
       flags: isSet(object.flags) ? Number(object.flags) : 0,
     };
   },
@@ -1717,15 +1799,19 @@ export const QualifierEvent = {
     const obj: any = {};
     message.guid !== undefined && (obj.guid = message.guid);
     message.name !== undefined && (obj.name = message.name);
-    message.guild !== undefined && (obj.guild = message.guild ? Guild.toJSON(message.guild) : undefined);
+    message.guild !== undefined &&
+      (obj.guild = message.guild ? Guild.toJSON(message.guild) : undefined);
     message.infoChannel !== undefined &&
       (obj.infoChannel = message.infoChannel ? Channel.toJSON(message.infoChannel) : undefined);
     if (message.qualifierMaps) {
-      obj.qualifierMaps = message.qualifierMaps.map((e) => e ? GameplayParameters.toJSON(e) : undefined);
+      obj.qualifierMaps = message.qualifierMaps.map((e) =>
+        e ? GameplayParameters.toJSON(e) : undefined,
+      );
     } else {
       obj.qualifierMaps = [];
     }
-    message.sendScoresToInfoChannel !== undefined && (obj.sendScoresToInfoChannel = message.sendScoresToInfoChannel);
+    message.sendScoresToInfoChannel !== undefined &&
+      (obj.sendScoresToInfoChannel = message.sendScoresToInfoChannel);
     message.flags !== undefined && (obj.flags = Math.round(message.flags));
     return obj;
   },
@@ -1734,11 +1820,16 @@ export const QualifierEvent = {
     const message = createBaseQualifierEvent();
     message.guid = object.guid ?? "";
     message.name = object.name ?? "";
-    message.guild = (object.guild !== undefined && object.guild !== null) ? Guild.fromPartial(object.guild) : undefined;
-    message.infoChannel = (object.infoChannel !== undefined && object.infoChannel !== null)
-      ? Channel.fromPartial(object.infoChannel)
-      : undefined;
-    message.qualifierMaps = object.qualifierMaps?.map((e) => GameplayParameters.fromPartial(e)) || [];
+    message.guild =
+      object.guild !== undefined && object.guild !== null
+        ? Guild.fromPartial(object.guild)
+        : undefined;
+    message.infoChannel =
+      object.infoChannel !== undefined && object.infoChannel !== null
+        ? Channel.fromPartial(object.infoChannel)
+        : undefined;
+    message.qualifierMaps =
+      object.qualifierMaps?.map((e) => GameplayParameters.fromPartial(e)) || [];
     message.sendScoresToInfoChannel = object.sendScoresToInfoChannel ?? false;
     message.flags = object.flags ?? 0;
     return message;
@@ -1876,35 +1967,45 @@ export const State = {
 
   fromJSON(object: any): State {
     return {
-      serverSettings: isSet(object.serverSettings) ? ServerSettings.fromJSON(object.serverSettings) : undefined,
+      serverSettings: isSet(object.serverSettings)
+        ? ServerSettings.fromJSON(object.serverSettings)
+        : undefined,
       users: Array.isArray(object?.users) ? object.users.map((e: any) => User.fromJSON(e)) : [],
-      matches: Array.isArray(object?.matches) ? object.matches.map((e: any) => Match.fromJSON(e)) : [],
-      events: Array.isArray(object?.events) ? object.events.map((e: any) => QualifierEvent.fromJSON(e)) : [],
-      knownHosts: Array.isArray(object?.knownHosts) ? object.knownHosts.map((e: any) => CoreServer.fromJSON(e)) : [],
+      matches: Array.isArray(object?.matches)
+        ? object.matches.map((e: any) => Match.fromJSON(e))
+        : [],
+      events: Array.isArray(object?.events)
+        ? object.events.map((e: any) => QualifierEvent.fromJSON(e))
+        : [],
+      knownHosts: Array.isArray(object?.knownHosts)
+        ? object.knownHosts.map((e: any) => CoreServer.fromJSON(e))
+        : [],
     };
   },
 
   toJSON(message: State): unknown {
     const obj: any = {};
     message.serverSettings !== undefined &&
-      (obj.serverSettings = message.serverSettings ? ServerSettings.toJSON(message.serverSettings) : undefined);
+      (obj.serverSettings = message.serverSettings
+        ? ServerSettings.toJSON(message.serverSettings)
+        : undefined);
     if (message.users) {
-      obj.users = message.users.map((e) => e ? User.toJSON(e) : undefined);
+      obj.users = message.users.map((e) => (e ? User.toJSON(e) : undefined));
     } else {
       obj.users = [];
     }
     if (message.matches) {
-      obj.matches = message.matches.map((e) => e ? Match.toJSON(e) : undefined);
+      obj.matches = message.matches.map((e) => (e ? Match.toJSON(e) : undefined));
     } else {
       obj.matches = [];
     }
     if (message.events) {
-      obj.events = message.events.map((e) => e ? QualifierEvent.toJSON(e) : undefined);
+      obj.events = message.events.map((e) => (e ? QualifierEvent.toJSON(e) : undefined));
     } else {
       obj.events = [];
     }
     if (message.knownHosts) {
-      obj.knownHosts = message.knownHosts.map((e) => e ? CoreServer.toJSON(e) : undefined);
+      obj.knownHosts = message.knownHosts.map((e) => (e ? CoreServer.toJSON(e) : undefined));
     } else {
       obj.knownHosts = [];
     }
@@ -1913,9 +2014,10 @@ export const State = {
 
   fromPartial<I extends Exact<DeepPartial<State>, I>>(object: I): State {
     const message = createBaseState();
-    message.serverSettings = (object.serverSettings !== undefined && object.serverSettings !== null)
-      ? ServerSettings.fromPartial(object.serverSettings)
-      : undefined;
+    message.serverSettings =
+      object.serverSettings !== undefined && object.serverSettings !== null
+        ? ServerSettings.fromPartial(object.serverSettings)
+        : undefined;
     message.users = object.users?.map((e) => User.fromPartial(e)) || [];
     message.matches = object.matches?.map((e) => Match.fromPartial(e)) || [];
     message.events = object.events?.map((e) => QualifierEvent.fromPartial(e)) || [];
@@ -1925,7 +2027,15 @@ export const State = {
 };
 
 function createBaseLeaderboardScore(): LeaderboardScore {
-  return { eventId: "", parameters: undefined, userId: "", username: "", score: 0, fullCombo: false, color: "" };
+  return {
+    eventId: "",
+    parameters: undefined,
+    userId: "",
+    username: "",
+    score: 0,
+    fullCombo: false,
+    color: "",
+  };
 }
 
 export const LeaderboardScore = {
@@ -1993,7 +2103,9 @@ export const LeaderboardScore = {
   fromJSON(object: any): LeaderboardScore {
     return {
       eventId: isSet(object.eventId) ? String(object.eventId) : "",
-      parameters: isSet(object.parameters) ? GameplayParameters.fromJSON(object.parameters) : undefined,
+      parameters: isSet(object.parameters)
+        ? GameplayParameters.fromJSON(object.parameters)
+        : undefined,
       userId: isSet(object.userId) ? String(object.userId) : "",
       username: isSet(object.username) ? String(object.username) : "",
       score: isSet(object.score) ? Number(object.score) : 0,
@@ -2006,7 +2118,9 @@ export const LeaderboardScore = {
     const obj: any = {};
     message.eventId !== undefined && (obj.eventId = message.eventId);
     message.parameters !== undefined &&
-      (obj.parameters = message.parameters ? GameplayParameters.toJSON(message.parameters) : undefined);
+      (obj.parameters = message.parameters
+        ? GameplayParameters.toJSON(message.parameters)
+        : undefined);
     message.userId !== undefined && (obj.userId = message.userId);
     message.username !== undefined && (obj.username = message.username);
     message.score !== undefined && (obj.score = Math.round(message.score));
@@ -2018,9 +2132,10 @@ export const LeaderboardScore = {
   fromPartial<I extends Exact<DeepPartial<LeaderboardScore>, I>>(object: I): LeaderboardScore {
     const message = createBaseLeaderboardScore();
     message.eventId = object.eventId ?? "";
-    message.parameters = (object.parameters !== undefined && object.parameters !== null)
-      ? GameplayParameters.fromPartial(object.parameters)
-      : undefined;
+    message.parameters =
+      object.parameters !== undefined && object.parameters !== null
+        ? GameplayParameters.fromPartial(object.parameters)
+        : undefined;
     message.userId = object.userId ?? "";
     message.username = object.username ?? "";
     message.score = object.score ?? 0;
@@ -2286,12 +2401,14 @@ export const ScoreTracker = {
     message.bombHits = object.bombHits ?? 0;
     message.wallHits = object.wallHits ?? 0;
     message.maxCombo = object.maxCombo ?? 0;
-    message.leftHand = (object.leftHand !== undefined && object.leftHand !== null)
-      ? ScoreTrackerHand.fromPartial(object.leftHand)
-      : undefined;
-    message.rightHand = (object.rightHand !== undefined && object.rightHand !== null)
-      ? ScoreTrackerHand.fromPartial(object.rightHand)
-      : undefined;
+    message.leftHand =
+      object.leftHand !== undefined && object.leftHand !== null
+        ? ScoreTrackerHand.fromPartial(object.leftHand)
+        : undefined;
+    message.rightHand =
+      object.rightHand !== undefined && object.rightHand !== null
+        ? ScoreTrackerHand.fromPartial(object.rightHand)
+        : undefined;
     return message;
   },
 };
@@ -2317,13 +2434,19 @@ var globalThis: any = (() => {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {

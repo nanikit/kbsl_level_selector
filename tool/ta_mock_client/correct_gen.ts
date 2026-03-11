@@ -1,11 +1,7 @@
 main().catch(console.error);
 
 async function main() {
-  const sources = [
-    "./protos/discord.ts",
-    "./protos/models.ts",
-    "./protos/packets.ts",
-  ];
+  const sources = ["./protos/discord.ts", "./protos/models.ts", "./protos/packets.ts"];
   await Promise.all(sources.map(rewriteSource));
 }
 
@@ -25,13 +21,7 @@ function processSource(source: string): string {
     'import Long from "long";',
     'import Long from "https://esm.sh/long@5.2.0";',
   );
-  transforming = transforming.replace(
-    ' from "./discord";',
-    ' from "./discord.ts";',
-  );
-  transforming = transforming.replace(
-    ' from "./models";',
-    ' from "./models.ts";',
-  );
+  transforming = transforming.replace(' from "./discord";', ' from "./discord.ts";');
+  transforming = transforming.replace(' from "./models";', ' from "./models.ts";');
   return transforming;
 }

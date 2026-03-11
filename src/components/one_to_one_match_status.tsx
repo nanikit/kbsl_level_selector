@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { GiLightSabers } from 'react-icons/gi';
-import { MdRestore } from 'react-icons/md';
-import { RiFlag2Fill, RiFlag2Line } from 'react-icons/ri';
-import { SiYelp } from 'react-icons/si';
-import { useQuery } from 'react-query';
+import React, { useCallback, useEffect, useRef } from "react";
+import { useDropzone } from "react-dropzone";
+import { GiLightSabers } from "react-icons/gi";
+import { MdRestore } from "react-icons/md";
+import { RiFlag2Fill, RiFlag2Line } from "react-icons/ri";
+import { SiYelp } from "react-icons/si";
+import { useQuery } from "react-query";
 import {
   getMatchFromPlaylist,
   OneToOneStatus,
   useMatchInformation,
   useOneToOneStatus,
-} from '../hooks/local_storage_hooks';
-import { useSyncedScore } from '../hooks/use_synced_score';
-import { TournamentState } from '../hooks/use_tournament';
-import { BeatsaverMap, getDataUrlFromHash } from '../services/beatsaver';
-import { Push_RealtimeScore } from '../services/protos/packets';
-import { useWindowSize } from 'react-use';
-import { TwoLineFittedText } from './two_line_fitted_text';
+} from "../hooks/local_storage_hooks";
+import { useSyncedScore } from "../hooks/use_synced_score";
+import { TournamentState } from "../hooks/use_tournament";
+import { BeatsaverMap, getDataUrlFromHash } from "../services/beatsaver";
+import { Push_RealtimeScore } from "../services/protos/packets";
+import { useWindowSize } from "react-use";
+import { TwoLineFittedText } from "./two_line_fitted_text";
 
 export default function OneToOneMatchStatus({
   title,
@@ -36,7 +36,7 @@ export default function OneToOneMatchStatus({
   const [local, saveToLocal] = useOneToOneStatus();
   const { player1, player2, hasPlayer1Retry, hasPlayer2Retry, tournamentServer } = local ?? {};
 
-  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? '')], {
+  const mapQuery = useQuery([getDataUrlFromHash(mapHash ?? "")], {
     enabled: !!mapHash,
     staleTime: Infinity,
   });
@@ -45,7 +45,7 @@ export default function OneToOneMatchStatus({
 
   const setPlayer = (index: number) => {
     const existing = index === 1 ? player1 : player2;
-    const id = prompt('Input user id', existing);
+    const id = prompt("Input user id", existing);
     if (id == null) {
       return;
     }
@@ -55,7 +55,7 @@ export default function OneToOneMatchStatus({
   };
 
   useEffect(() => {
-    saveToLocal({ ...local, tournamentServer: '' });
+    saveToLocal({ ...local, tournamentServer: "" });
     saveToLocal({ ...local, tournamentServer });
   }, [player1, player2, tournamentServer]);
 
@@ -109,10 +109,10 @@ function RealtimeScore(tournament: TournamentState) {
         <p className="text-[1.5vw] leading-[1.5vw]">{getMissText(player1)}</p>
         <p
           className={`leading-[3vw] w-[15vw] font-[Consolas,monospace] text-right transition-all ${
-            isPlayer1Super ? 'text-[4vw]' : 'text-[3vw]'
+            isPlayer1Super ? "text-[4vw]" : "text-[3vw]"
           }`}
         >
-          {accuracy1 ? `${(accuracy1 * 100).toFixed(2)}%` : ''}
+          {accuracy1 ? `${(accuracy1 * 100).toFixed(2)}%` : ""}
         </p>
       </div>
       <span className="w-[1vw]" />
@@ -120,10 +120,10 @@ function RealtimeScore(tournament: TournamentState) {
         <p className="text-[1.5vw] leading-[1.5vw]">{getMissText(player2)}</p>
         <p
           className={`leading-[3vw] w-[15vw] font-[Consolas,monospace] transition-all ${
-            isPlayer2Super ? 'text-[4vw]' : 'text-[3vw]'
+            isPlayer2Super ? "text-[4vw]" : "text-[3vw]"
           }`}
         >
-          {accuracy2 ? `${(accuracy2 * 100).toFixed(2)}%` : ''}
+          {accuracy2 ? `${(accuracy2 * 100).toFixed(2)}%` : ""}
         </p>
       </div>
     </div>
@@ -132,11 +132,11 @@ function RealtimeScore(tournament: TournamentState) {
 
 function getMissText(score?: Push_RealtimeScore): string {
   if (score === undefined) {
-    return '';
+    return "";
   }
   const { badCuts, bombHits, notesMissed, wallHits } = score?.scoreTracker ?? {};
   if (!(badCuts || bombHits || notesMissed || wallHits)) {
-    return 'FC';
+    return "FC";
   }
   return `${(badCuts ?? 0) + (notesMissed ?? 0)}`;
 }
@@ -173,14 +173,14 @@ function CurrentMapCard({
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: { 'application/json': ['.json', '.bplist'] },
+    accept: { "application/json": [".json", ".bplist"] },
   });
 
   const setTournamentServer = (ev: React.MouseEvent) => {
     ev.preventDefault();
     const url = prompt(
-      'Input the tournament server url',
-      oneToOne.tournamentServer || 'ws://tournamentassistant.net:2053',
+      "Input the tournament server url",
+      oneToOne.tournamentServer || "ws://tournamentassistant.net:2053",
     );
     if (!url) {
       return;
@@ -203,9 +203,9 @@ function CurrentMapCard({
     <div
       onContextMenu={setTournamentServer}
       className={
-        'flex-1 h-full rounded-[2vw] border-black border-[0.2vw] mx-[1vw] overflow-hidden' +
-        ' text-white flex flex-col items-center justify-center text-[4vmin] font-bold ' +
-        ' relative text-center font-extrabold text-outshadow bg-slate-900'
+        "flex-1 h-full rounded-[2vw] border-black border-[0.2vw] mx-[1vw] overflow-hidden" +
+        " text-white flex flex-col items-center justify-center text-[4vmin] font-bold " +
+        " relative text-center font-extrabold text-outshadow bg-slate-900"
       }
       {...getRootProps()}
     >
@@ -238,7 +238,7 @@ function CurrentMapCard({
   );
 }
 
-const apiOrigin = location.origin.endsWith('pages.dev') ? '' : 'http://localhost:8788';
+const apiOrigin = location.origin.endsWith("pages.dev") ? "" : "http://localhost:8788";
 
 function Nameplate({
   userId,
@@ -277,33 +277,33 @@ function Nameplate({
   const beatLeaderPfpUrl = (beatLeaderProfileQuery.data as any)?.avatar;
   const scoresaberPfpUrl = `https://cdn.scoresaber.com/avatars/${userId}.jpg`;
   const pfpUrl = beatLeaderPfpUrl ?? scoresaberPfpUrl;
-  const name = beatLeaderProfile?.name ?? scoresaberProfile?.playerInfo.playerName ?? '';
+  const name = beatLeaderProfile?.name ?? scoresaberProfile?.playerInfo.playerName ?? "";
 
   return (
-    <div className={`flex-[1.7] flex ${reverse ? 'flex-row-reverse' : 'flex-row'} items-center`}>
+    <div className={`flex-[1.7] flex ${reverse ? "flex-row-reverse" : "flex-row"} items-center`}>
       <img
         className="h-full aspect-square border-[0.15vw] border-violet-900 shadow-xl rounded-[2vw]"
-        src={userId ? pfpUrl : '/unknown.jpg'}
+        src={userId ? pfpUrl : "/unknown.jpg"}
         onClick={onPfpClick}
       />
       <span className="w-4" />
-      <div className={`flex-[1_1_4rem] h-2/3 flex flex-col ${reverse ? 'items-end' : ''}`}>
-        <div className={'h-1/2 flex ' + (reverse ? 'flex-row-reverse' : 'flex-row')}>
+      <div className={`flex-[1_1_4rem] h-2/3 flex flex-col ${reverse ? "items-end" : ""}`}>
+        <div className={"h-1/2 flex " + (reverse ? "flex-row-reverse" : "flex-row")}>
           <div
             className={`w-[10.5vw] clip polygon text-[2vw] flex items-center px-[1vw] ${
-              !reverse ? 'bg-red-500 b-9 flex-row' : 'bg-blue-500 a-9 flex-row-reverse'
+              !reverse ? "bg-red-500 b-9 flex-row" : "bg-blue-500 a-9 flex-row-reverse"
             }`}
           >
             {[...Array(goal ?? 4).keys()].map((index) =>
               index < (win ?? 0) ? (
                 <RiFlag2Fill
                   key={index}
-                  className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'}
+                  className={!reverse ? "fill-red-900" : "fill-blue-900 scale-x-[-1]"}
                 />
               ) : (
                 <RiFlag2Line
                   key={index}
-                  className={!reverse ? 'fill-red-900' : 'fill-blue-900 scale-x-[-1]'}
+                  className={!reverse ? "fill-red-900" : "fill-blue-900 scale-x-[-1]"}
                 />
               ),
             )}
@@ -314,7 +314,7 @@ function Nameplate({
         </div>
         <div
           className={`h-2/3 w-full flex items-center px-4 clip polygon ${
-            !reverse ? 'bg-red-300 b-9' : 'bg-blue-300 a-9 flex-row-reverse'
+            !reverse ? "bg-red-300 b-9" : "bg-blue-300 a-9 flex-row-reverse"
           }`}
         >
           <p className="font-[Maplestory] text-[2vw] font-extrabold text-white text-outshadow ">

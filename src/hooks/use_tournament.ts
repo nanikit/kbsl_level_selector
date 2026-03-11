@@ -1,14 +1,14 @@
-import { atom, useAtom } from 'jotai';
-import { uniqBy } from 'lodash-es';
-import useWebSocket, { SendMessage } from 'react-use-websocket';
+import { atom, useAtom } from "jotai";
+import { uniqBy } from "lodash-es";
+import useWebSocket, { SendMessage } from "react-use-websocket";
 import {
   Match,
   User,
   User_ClientTypes,
   User_DownloadStates,
   User_PlayStates,
-} from '../services/protos/models';
-import { Packet, Push_RealtimeScore } from '../services/protos/packets';
+} from "../services/protos/models";
+import { Packet, Push_RealtimeScore } from "../services/protos/packets";
 
 export type TournamentSearch = {
   server?: string;
@@ -34,7 +34,7 @@ export type TournamentState = {
   self?: User;
 };
 
-type CustomMessage = ['setMatch', Match];
+type CustomMessage = ["setMatch", Match];
 
 const tournamentStateAtom = atom({} as TournamentState);
 const tournamentAtom = atom(
@@ -45,7 +45,7 @@ const tournamentAtom = atom(
     input: {
       message: Packet | CustomMessage;
       search: TournamentSearch;
-      sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
+      sendMessage: ReturnType<typeof useWebSocket>["sendMessage"];
     },
   ) => {
     set(tournamentStateAtom, collectMessage({ ...input, state: get(tournamentAtom) }));
@@ -62,9 +62,9 @@ export function useTournamentAssistant(search: TournamentSearch) {
           request: {
             connect: {
               user: {
-                name: 'accurary_monitor',
+                name: "accurary_monitor",
                 clientType: User_ClientTypes.WebsocketConnection,
-                userId: '0',
+                userId: "0",
               },
               clientVersion: 67,
             },
@@ -83,7 +83,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
   });
   const send = sendMessage;
   sendMessage = (message) => {
-    console.log('sendMessage', Packet.decode(message as Uint8Array));
+    console.log("sendMessage", Packet.decode(message as Uint8Array));
     send(message);
   };
 
@@ -91,7 +91,7 @@ export function useTournamentAssistant(search: TournamentSearch) {
     tournament,
     {
       setMatch: (match: Match) => {
-        dispatch({ message: ['setMatch', match], search, sendMessage });
+        dispatch({ message: ["setMatch", match], search, sendMessage });
       },
     },
   ] as const;
@@ -106,7 +106,7 @@ function collectMessage({
   message: Packet | CustomMessage;
   state: TournamentState;
   search: TournamentSearch;
-  sendMessage: ReturnType<typeof useWebSocket>['sendMessage'];
+  sendMessage: ReturnType<typeof useWebSocket>["sendMessage"];
 }): TournamentState {
   if (Array.isArray(message)) {
     return collectCustomMessage({ message, state, sendMessage });
@@ -261,7 +261,7 @@ function associateMe(
   {
     self,
     sendMessage,
-  }: { self: User; sendMessage: ReturnType<typeof useWebSocket>['sendMessage'] },
+  }: { self: User; sendMessage: ReturnType<typeof useWebSocket>["sendMessage"] },
 ) {
   if (match.associatedUsers?.includes(self.guid!)) {
     return;

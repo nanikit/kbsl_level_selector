@@ -1,7 +1,7 @@
-import { useEffect, useReducer } from 'react';
-import { User, User_PlayStates } from '../services/protos/models';
-import { Push_RealtimeScore } from '../services/protos/packets';
-import { timeout } from '../services/utils';
+import { useEffect, useReducer } from "react";
+import { User, User_PlayStates } from "../services/protos/models";
+import { Push_RealtimeScore } from "../services/protos/packets";
+import { timeout } from "../services/utils";
 
 export function useSyncedScore({ player, score }: { player?: User; score?: Push_RealtimeScore }) {
   const delay = player?.streamDelayMs;

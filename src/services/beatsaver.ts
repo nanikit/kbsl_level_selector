@@ -1,4 +1,4 @@
-export type Difficulty = 'Easy' | 'Normal' | 'Hard' | 'Expert' | 'ExpertPlus';
+export type Difficulty = "Easy" | "Normal" | "Hard" | "Expert" | "ExpertPlus";
 export type BeatsaverMap = {
   id: string;
   name: string;

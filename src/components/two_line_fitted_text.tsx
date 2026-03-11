@@ -1,5 +1,5 @@
-import { HTMLProps, MutableRefObject, useEffect, useRef } from 'react';
-import { useMeasure } from 'react-use';
+import { HTMLProps, MutableRefObject, useEffect, useRef } from "react";
+import { useMeasure } from "react-use";
 
 export function TwoLineFittedText({
   children,
@@ -23,7 +23,7 @@ export function TwoLineFittedText({
     <p ref={ref} {...props}>
       <span
         ref={spanRef as unknown as MutableRefObject<HTMLElement>}
-        className='font-light whitespace-pre-line'
+        className="font-light whitespace-pre-line"
       >
         {children}
       </span>
@@ -35,7 +35,7 @@ function twoLineTextFill(
   element: HTMLElement,
   { maxWidth, maxHeight, maxSize }: { maxWidth: number; maxHeight: number; maxSize: number },
 ) {
-  const span = element.querySelector('span')!;
+  const span = element.querySelector("span")!;
   let fontSize = Math.min(maxWidth, maxHeight, maxSize);
   let textHeight;
   let textWidth;

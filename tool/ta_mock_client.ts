@@ -16,47 +16,55 @@ async function main() {
     alias: { s: "server" },
     default: { server: "ws://localhost:2053" },
   });
-  const { socket: p1 } = await createConnection({
-    name: "nanikit",
-    userId: "76561198159100356",
-    clientType: User_ClientTypes.Player,
-    modList: [
-      "yt-dlp",
-      "BSIPA",
-      "BeatSaberMarkupLanguage",
-      "SiraUtil",
-      "Ini Parser",
-      "NoItalics",
-      "Arcgap",
-      "SoundReplacer",
-      "TournamentAssistant",
-    ],
-  }, { server });
-  const { socket: p2 } = await createConnection({
-    name: "suisensei",
-    userId: "76561198357821968",
-    clientType: User_ClientTypes.Player,
-    modList: [
-      "yt-dlp",
-      "BSIPA",
-      "BeatSaberMarkupLanguage",
-      "SiraUtil",
-      "Ini Parser",
-      "NoItalics",
-      "Arcgap",
-      "SoundReplacer",
-      "TournamentAssistant",
-    ],
-  }, { server });
-  const { socket: coordinator, added } = await createConnection({
-    name: "sier",
-    userId: "0",
-    clientType: User_ClientTypes.Coordinator,
-  }, { server });
+  const { socket: p1 } = await createConnection(
+    {
+      name: "nanikit",
+      userId: "76561198159100356",
+      clientType: User_ClientTypes.Player,
+      modList: [
+        "yt-dlp",
+        "BSIPA",
+        "BeatSaberMarkupLanguage",
+        "SiraUtil",
+        "Ini Parser",
+        "NoItalics",
+        "Arcgap",
+        "SoundReplacer",
+        "TournamentAssistant",
+      ],
+    },
+    { server },
+  );
+  const { socket: p2 } = await createConnection(
+    {
+      name: "suisensei",
+      userId: "76561198357821968",
+      clientType: User_ClientTypes.Player,
+      modList: [
+        "yt-dlp",
+        "BSIPA",
+        "BeatSaberMarkupLanguage",
+        "SiraUtil",
+        "Ini Parser",
+        "NoItalics",
+        "Arcgap",
+        "SoundReplacer",
+        "TournamentAssistant",
+      ],
+    },
+    { server },
+  );
+  const { socket: coordinator, added } = await createConnection(
+    {
+      name: "sier",
+      userId: "0",
+      clientType: User_ClientTypes.Coordinator,
+    },
+    { server },
+  );
 
   while (true) {
-    const users = messages.sier.map((x) => x.response?.connect?.state?.users)
-      .find((x) => x);
+    const users = messages.sier.map((x) => x.response?.connect?.state?.users).find((x) => x);
     if (!users) {
       await delay(300);
       continue;
@@ -137,9 +145,7 @@ async function createConnection(user: User, { server }: { server: string }) {
   const socket = new WebSocket(server);
   socket.addEventListener("message", async (message: MessageEvent<Blob>) => {
     const buffer = await message.data.arrayBuffer();
-    messages[user.name as keyof typeof messages].push(
-      Packet.decode(new Uint8Array(buffer)),
-    );
+    messages[user.name as keyof typeof messages].push(Packet.decode(new Uint8Array(buffer)));
   });
   socket.addEventListener("error", (err) => {
     console.error(`${user.name} error: ${err}`);

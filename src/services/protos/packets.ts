@@ -97,7 +97,9 @@ export enum Push_SongFinished_CompletionType {
   UNRECOGNIZED = -1,
 }
 
-export function push_SongFinished_CompletionTypeFromJSON(object: any): Push_SongFinished_CompletionType {
+export function push_SongFinished_CompletionTypeFromJSON(
+  object: any,
+): Push_SongFinished_CompletionType {
   switch (object) {
     case 0:
     case "Passed":
@@ -115,7 +117,9 @@ export function push_SongFinished_CompletionTypeFromJSON(object: any): Push_Song
   }
 }
 
-export function push_SongFinished_CompletionTypeToJSON(object: Push_SongFinished_CompletionType): string {
+export function push_SongFinished_CompletionTypeToJSON(
+  object: Push_SongFinished_CompletionType,
+): string {
   switch (object) {
     case Push_SongFinished_CompletionType.Passed:
       return "Passed";
@@ -237,7 +241,9 @@ export enum Acknowledgement_AcknowledgementType {
   UNRECOGNIZED = -1,
 }
 
-export function acknowledgement_AcknowledgementTypeFromJSON(object: any): Acknowledgement_AcknowledgementType {
+export function acknowledgement_AcknowledgementTypeFromJSON(
+  object: any,
+): Acknowledgement_AcknowledgementType {
   switch (object) {
     case 0:
     case "MessageReceived":
@@ -249,7 +255,9 @@ export function acknowledgement_AcknowledgementTypeFromJSON(object: any): Acknow
   }
 }
 
-export function acknowledgement_AcknowledgementTypeToJSON(object: Acknowledgement_AcknowledgementType): string {
+export function acknowledgement_AcknowledgementTypeToJSON(
+  object: Acknowledgement_AcknowledgementType,
+): string {
   switch (object) {
     case Acknowledgement_AcknowledgementType.MessageReceived:
       return "MessageReceived";
@@ -420,10 +428,14 @@ export const Command = {
       heartbeat: isSet(object.heartbeat) ? Boolean(object.heartbeat) : undefined,
       returnToMenu: isSet(object.returnToMenu) ? Boolean(object.returnToMenu) : undefined,
       delayTestFinish: isSet(object.delayTestFinish) ? Boolean(object.delayTestFinish) : undefined,
-      streamSyncShowImage: isSet(object.streamSyncShowImage) ? Boolean(object.streamSyncShowImage) : undefined,
+      streamSyncShowImage: isSet(object.streamSyncShowImage)
+        ? Boolean(object.streamSyncShowImage)
+        : undefined,
       loadSong: isSet(object.loadSong) ? Command_LoadSong.fromJSON(object.loadSong) : undefined,
       playSong: isSet(object.playSong) ? Command_PlaySong.fromJSON(object.playSong) : undefined,
-      sendBotMessage: isSet(object.sendBotMessage) ? Command_SendBotMessage.fromJSON(object.sendBotMessage) : undefined,
+      sendBotMessage: isSet(object.sendBotMessage)
+        ? Command_SendBotMessage.fromJSON(object.sendBotMessage)
+        : undefined,
       showModal: isSet(object.showModal) ? Command_ShowModal.fromJSON(object.showModal) : undefined,
     };
   },
@@ -433,13 +445,16 @@ export const Command = {
     message.heartbeat !== undefined && (obj.heartbeat = message.heartbeat);
     message.returnToMenu !== undefined && (obj.returnToMenu = message.returnToMenu);
     message.delayTestFinish !== undefined && (obj.delayTestFinish = message.delayTestFinish);
-    message.streamSyncShowImage !== undefined && (obj.streamSyncShowImage = message.streamSyncShowImage);
+    message.streamSyncShowImage !== undefined &&
+      (obj.streamSyncShowImage = message.streamSyncShowImage);
     message.loadSong !== undefined &&
       (obj.loadSong = message.loadSong ? Command_LoadSong.toJSON(message.loadSong) : undefined);
     message.playSong !== undefined &&
       (obj.playSong = message.playSong ? Command_PlaySong.toJSON(message.playSong) : undefined);
     message.sendBotMessage !== undefined &&
-      (obj.sendBotMessage = message.sendBotMessage ? Command_SendBotMessage.toJSON(message.sendBotMessage) : undefined);
+      (obj.sendBotMessage = message.sendBotMessage
+        ? Command_SendBotMessage.toJSON(message.sendBotMessage)
+        : undefined);
     message.showModal !== undefined &&
       (obj.showModal = message.showModal ? Command_ShowModal.toJSON(message.showModal) : undefined);
     return obj;
@@ -451,18 +466,22 @@ export const Command = {
     message.returnToMenu = object.returnToMenu ?? undefined;
     message.delayTestFinish = object.delayTestFinish ?? undefined;
     message.streamSyncShowImage = object.streamSyncShowImage ?? undefined;
-    message.loadSong = (object.loadSong !== undefined && object.loadSong !== null)
-      ? Command_LoadSong.fromPartial(object.loadSong)
-      : undefined;
-    message.playSong = (object.playSong !== undefined && object.playSong !== null)
-      ? Command_PlaySong.fromPartial(object.playSong)
-      : undefined;
-    message.sendBotMessage = (object.sendBotMessage !== undefined && object.sendBotMessage !== null)
-      ? Command_SendBotMessage.fromPartial(object.sendBotMessage)
-      : undefined;
-    message.showModal = (object.showModal !== undefined && object.showModal !== null)
-      ? Command_ShowModal.fromPartial(object.showModal)
-      : undefined;
+    message.loadSong =
+      object.loadSong !== undefined && object.loadSong !== null
+        ? Command_LoadSong.fromPartial(object.loadSong)
+        : undefined;
+    message.playSong =
+      object.playSong !== undefined && object.playSong !== null
+        ? Command_PlaySong.fromPartial(object.playSong)
+        : undefined;
+    message.sendBotMessage =
+      object.sendBotMessage !== undefined && object.sendBotMessage !== null
+        ? Command_SendBotMessage.fromPartial(object.sendBotMessage)
+        : undefined;
+    message.showModal =
+      object.showModal !== undefined && object.showModal !== null
+        ? Command_ShowModal.fromPartial(object.showModal)
+        : undefined;
     return message;
   },
 };
@@ -604,37 +623,45 @@ export const Command_PlaySong = {
       gameplayParameters: isSet(object.gameplayParameters)
         ? GameplayParameters.fromJSON(object.gameplayParameters)
         : undefined,
-      floatingScoreboard: isSet(object.floatingScoreboard) ? Boolean(object.floatingScoreboard) : false,
+      floatingScoreboard: isSet(object.floatingScoreboard)
+        ? Boolean(object.floatingScoreboard)
+        : false,
       streamSync: isSet(object.streamSync) ? Boolean(object.streamSync) : false,
       disableFail: isSet(object.disableFail) ? Boolean(object.disableFail) : false,
       disablePause: isSet(object.disablePause) ? Boolean(object.disablePause) : false,
       disableScoresaberSubmission: isSet(object.disableScoresaberSubmission)
         ? Boolean(object.disableScoresaberSubmission)
         : false,
-      showNormalNotesOnStream: isSet(object.showNormalNotesOnStream) ? Boolean(object.showNormalNotesOnStream) : false,
+      showNormalNotesOnStream: isSet(object.showNormalNotesOnStream)
+        ? Boolean(object.showNormalNotesOnStream)
+        : false,
     };
   },
 
   toJSON(message: Command_PlaySong): unknown {
     const obj: any = {};
-    message.gameplayParameters !== undefined && (obj.gameplayParameters = message.gameplayParameters
-      ? GameplayParameters.toJSON(message.gameplayParameters)
-      : undefined);
-    message.floatingScoreboard !== undefined && (obj.floatingScoreboard = message.floatingScoreboard);
+    message.gameplayParameters !== undefined &&
+      (obj.gameplayParameters = message.gameplayParameters
+        ? GameplayParameters.toJSON(message.gameplayParameters)
+        : undefined);
+    message.floatingScoreboard !== undefined &&
+      (obj.floatingScoreboard = message.floatingScoreboard);
     message.streamSync !== undefined && (obj.streamSync = message.streamSync);
     message.disableFail !== undefined && (obj.disableFail = message.disableFail);
     message.disablePause !== undefined && (obj.disablePause = message.disablePause);
     message.disableScoresaberSubmission !== undefined &&
       (obj.disableScoresaberSubmission = message.disableScoresaberSubmission);
-    message.showNormalNotesOnStream !== undefined && (obj.showNormalNotesOnStream = message.showNormalNotesOnStream);
+    message.showNormalNotesOnStream !== undefined &&
+      (obj.showNormalNotesOnStream = message.showNormalNotesOnStream);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Command_PlaySong>, I>>(object: I): Command_PlaySong {
     const message = createBaseCommand_PlaySong();
-    message.gameplayParameters = (object.gameplayParameters !== undefined && object.gameplayParameters !== null)
-      ? GameplayParameters.fromPartial(object.gameplayParameters)
-      : undefined;
+    message.gameplayParameters =
+      object.gameplayParameters !== undefined && object.gameplayParameters !== null
+        ? GameplayParameters.fromPartial(object.gameplayParameters)
+        : undefined;
     message.floatingScoreboard = object.floatingScoreboard ?? false;
     message.streamSync = object.streamSync ?? false;
     message.disableFail = object.disableFail ?? false;
@@ -690,23 +717,34 @@ export const Command_SendBotMessage = {
 
   toJSON(message: Command_SendBotMessage): unknown {
     const obj: any = {};
-    message.channel !== undefined && (obj.channel = message.channel ? Channel.toJSON(message.channel) : undefined);
+    message.channel !== undefined &&
+      (obj.channel = message.channel ? Channel.toJSON(message.channel) : undefined);
     message.message !== undefined && (obj.message = message.message);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Command_SendBotMessage>, I>>(object: I): Command_SendBotMessage {
+  fromPartial<I extends Exact<DeepPartial<Command_SendBotMessage>, I>>(
+    object: I,
+  ): Command_SendBotMessage {
     const message = createBaseCommand_SendBotMessage();
-    message.channel = (object.channel !== undefined && object.channel !== null)
-      ? Channel.fromPartial(object.channel)
-      : undefined;
+    message.channel =
+      object.channel !== undefined && object.channel !== null
+        ? Channel.fromPartial(object.channel)
+        : undefined;
     message.message = object.message ?? "";
     return message;
   },
 };
 
 function createBaseCommand_ShowModal(): Command_ShowModal {
-  return { modalId: "", messageTitle: "", messageText: "", canClose: false, option1: undefined, option2: undefined };
+  return {
+    modalId: "",
+    messageTitle: "",
+    messageText: "",
+    canClose: false,
+    option1: undefined,
+    option2: undefined,
+  };
 }
 
 export const Command_ShowModal = {
@@ -782,8 +820,10 @@ export const Command_ShowModal = {
     message.messageTitle !== undefined && (obj.messageTitle = message.messageTitle);
     message.messageText !== undefined && (obj.messageText = message.messageText);
     message.canClose !== undefined && (obj.canClose = message.canClose);
-    message.option1 !== undefined && (obj.option1 = message.option1 ? ModalOption.toJSON(message.option1) : undefined);
-    message.option2 !== undefined && (obj.option2 = message.option2 ? ModalOption.toJSON(message.option2) : undefined);
+    message.option1 !== undefined &&
+      (obj.option1 = message.option1 ? ModalOption.toJSON(message.option1) : undefined);
+    message.option2 !== undefined &&
+      (obj.option2 = message.option2 ? ModalOption.toJSON(message.option2) : undefined);
     return obj;
   },
 
@@ -793,12 +833,14 @@ export const Command_ShowModal = {
     message.messageTitle = object.messageTitle ?? "";
     message.messageText = object.messageText ?? "";
     message.canClose = object.canClose ?? false;
-    message.option1 = (object.option1 !== undefined && object.option1 !== null)
-      ? ModalOption.fromPartial(object.option1)
-      : undefined;
-    message.option2 = (object.option2 !== undefined && object.option2 !== null)
-      ? ModalOption.fromPartial(object.option2)
-      : undefined;
+    message.option1 =
+      object.option1 !== undefined && object.option1 !== null
+        ? ModalOption.fromPartial(object.option1)
+        : undefined;
+    message.option2 =
+      object.option2 !== undefined && object.option2 !== null
+        ? ModalOption.fromPartial(object.option2)
+        : undefined;
     return message;
   },
 };
@@ -850,34 +892,46 @@ export const Push = {
       leaderboardScore: isSet(object.leaderboardScore)
         ? Push_LeaderboardScore.fromJSON(object.leaderboardScore)
         : undefined,
-      realtimeScore: isSet(object.realtimeScore) ? Push_RealtimeScore.fromJSON(object.realtimeScore) : undefined,
-      songFinished: isSet(object.songFinished) ? Push_SongFinished.fromJSON(object.songFinished) : undefined,
+      realtimeScore: isSet(object.realtimeScore)
+        ? Push_RealtimeScore.fromJSON(object.realtimeScore)
+        : undefined,
+      songFinished: isSet(object.songFinished)
+        ? Push_SongFinished.fromJSON(object.songFinished)
+        : undefined,
     };
   },
 
   toJSON(message: Push): unknown {
     const obj: any = {};
-    message.leaderboardScore !== undefined && (obj.leaderboardScore = message.leaderboardScore
-      ? Push_LeaderboardScore.toJSON(message.leaderboardScore)
-      : undefined);
+    message.leaderboardScore !== undefined &&
+      (obj.leaderboardScore = message.leaderboardScore
+        ? Push_LeaderboardScore.toJSON(message.leaderboardScore)
+        : undefined);
     message.realtimeScore !== undefined &&
-      (obj.realtimeScore = message.realtimeScore ? Push_RealtimeScore.toJSON(message.realtimeScore) : undefined);
+      (obj.realtimeScore = message.realtimeScore
+        ? Push_RealtimeScore.toJSON(message.realtimeScore)
+        : undefined);
     message.songFinished !== undefined &&
-      (obj.songFinished = message.songFinished ? Push_SongFinished.toJSON(message.songFinished) : undefined);
+      (obj.songFinished = message.songFinished
+        ? Push_SongFinished.toJSON(message.songFinished)
+        : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Push>, I>>(object: I): Push {
     const message = createBasePush();
-    message.leaderboardScore = (object.leaderboardScore !== undefined && object.leaderboardScore !== null)
-      ? Push_LeaderboardScore.fromPartial(object.leaderboardScore)
-      : undefined;
-    message.realtimeScore = (object.realtimeScore !== undefined && object.realtimeScore !== null)
-      ? Push_RealtimeScore.fromPartial(object.realtimeScore)
-      : undefined;
-    message.songFinished = (object.songFinished !== undefined && object.songFinished !== null)
-      ? Push_SongFinished.fromPartial(object.songFinished)
-      : undefined;
+    message.leaderboardScore =
+      object.leaderboardScore !== undefined && object.leaderboardScore !== null
+        ? Push_LeaderboardScore.fromPartial(object.leaderboardScore)
+        : undefined;
+    message.realtimeScore =
+      object.realtimeScore !== undefined && object.realtimeScore !== null
+        ? Push_RealtimeScore.fromPartial(object.realtimeScore)
+        : undefined;
+    message.songFinished =
+      object.songFinished !== undefined && object.songFinished !== null
+        ? Push_SongFinished.fromPartial(object.songFinished)
+        : undefined;
     return message;
   },
 };
@@ -918,15 +972,19 @@ export const Push_LeaderboardScore = {
 
   toJSON(message: Push_LeaderboardScore): unknown {
     const obj: any = {};
-    message.score !== undefined && (obj.score = message.score ? LeaderboardScore.toJSON(message.score) : undefined);
+    message.score !== undefined &&
+      (obj.score = message.score ? LeaderboardScore.toJSON(message.score) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Push_LeaderboardScore>, I>>(object: I): Push_LeaderboardScore {
+  fromPartial<I extends Exact<DeepPartial<Push_LeaderboardScore>, I>>(
+    object: I,
+  ): Push_LeaderboardScore {
     const message = createBasePush_LeaderboardScore();
-    message.score = (object.score !== undefined && object.score !== null)
-      ? LeaderboardScore.fromPartial(object.score)
-      : undefined;
+    message.score =
+      object.score !== undefined && object.score !== null
+        ? LeaderboardScore.fromPartial(object.score)
+        : undefined;
     return message;
   },
 };
@@ -1032,12 +1090,16 @@ export const Push_RealtimeScore = {
       score: isSet(object.score) ? Number(object.score) : 0,
       scoreWithModifiers: isSet(object.scoreWithModifiers) ? Number(object.scoreWithModifiers) : 0,
       maxScore: isSet(object.maxScore) ? Number(object.maxScore) : 0,
-      maxScoreWithModifiers: isSet(object.maxScoreWithModifiers) ? Number(object.maxScoreWithModifiers) : 0,
+      maxScoreWithModifiers: isSet(object.maxScoreWithModifiers)
+        ? Number(object.maxScoreWithModifiers)
+        : 0,
       combo: isSet(object.combo) ? Number(object.combo) : 0,
       playerHealth: isSet(object.playerHealth) ? Number(object.playerHealth) : 0,
       accuracy: isSet(object.accuracy) ? Number(object.accuracy) : 0,
       songPosition: isSet(object.songPosition) ? Number(object.songPosition) : 0,
-      scoreTracker: isSet(object.scoreTracker) ? ScoreTracker.fromJSON(object.scoreTracker) : undefined,
+      scoreTracker: isSet(object.scoreTracker)
+        ? ScoreTracker.fromJSON(object.scoreTracker)
+        : undefined,
     };
   },
 
@@ -1045,7 +1107,8 @@ export const Push_RealtimeScore = {
     const obj: any = {};
     message.userGuid !== undefined && (obj.userGuid = message.userGuid);
     message.score !== undefined && (obj.score = Math.round(message.score));
-    message.scoreWithModifiers !== undefined && (obj.scoreWithModifiers = Math.round(message.scoreWithModifiers));
+    message.scoreWithModifiers !== undefined &&
+      (obj.scoreWithModifiers = Math.round(message.scoreWithModifiers));
     message.maxScore !== undefined && (obj.maxScore = Math.round(message.maxScore));
     message.maxScoreWithModifiers !== undefined &&
       (obj.maxScoreWithModifiers = Math.round(message.maxScoreWithModifiers));
@@ -1054,7 +1117,9 @@ export const Push_RealtimeScore = {
     message.accuracy !== undefined && (obj.accuracy = message.accuracy);
     message.songPosition !== undefined && (obj.songPosition = message.songPosition);
     message.scoreTracker !== undefined &&
-      (obj.scoreTracker = message.scoreTracker ? ScoreTracker.toJSON(message.scoreTracker) : undefined);
+      (obj.scoreTracker = message.scoreTracker
+        ? ScoreTracker.toJSON(message.scoreTracker)
+        : undefined);
     return obj;
   },
 
@@ -1069,9 +1134,10 @@ export const Push_RealtimeScore = {
     message.playerHealth = object.playerHealth ?? 0;
     message.accuracy = object.accuracy ?? 0;
     message.songPosition = object.songPosition ?? 0;
-    message.scoreTracker = (object.scoreTracker !== undefined && object.scoreTracker !== null)
-      ? ScoreTracker.fromPartial(object.scoreTracker)
-      : undefined;
+    message.scoreTracker =
+      object.scoreTracker !== undefined && object.scoreTracker !== null
+        ? ScoreTracker.fromPartial(object.scoreTracker)
+        : undefined;
     return message;
   },
 };
@@ -1135,8 +1201,10 @@ export const Push_SongFinished = {
 
   toJSON(message: Push_SongFinished): unknown {
     const obj: any = {};
-    message.player !== undefined && (obj.player = message.player ? User.toJSON(message.player) : undefined);
-    message.beatmap !== undefined && (obj.beatmap = message.beatmap ? Beatmap.toJSON(message.beatmap) : undefined);
+    message.player !== undefined &&
+      (obj.player = message.player ? User.toJSON(message.player) : undefined);
+    message.beatmap !== undefined &&
+      (obj.beatmap = message.beatmap ? Beatmap.toJSON(message.beatmap) : undefined);
     message.type !== undefined && (obj.type = push_SongFinished_CompletionTypeToJSON(message.type));
     message.score !== undefined && (obj.score = Math.round(message.score));
     return obj;
@@ -1144,12 +1212,14 @@ export const Push_SongFinished = {
 
   fromPartial<I extends Exact<DeepPartial<Push_SongFinished>, I>>(object: I): Push_SongFinished {
     const message = createBasePush_SongFinished();
-    message.player = (object.player !== undefined && object.player !== null)
-      ? User.fromPartial(object.player)
-      : undefined;
-    message.beatmap = (object.beatmap !== undefined && object.beatmap !== null)
-      ? Beatmap.fromPartial(object.beatmap)
-      : undefined;
+    message.player =
+      object.player !== undefined && object.player !== null
+        ? User.fromPartial(object.player)
+        : undefined;
+    message.beatmap =
+      object.beatmap !== undefined && object.beatmap !== null
+        ? Beatmap.fromPartial(object.beatmap)
+        : undefined;
     message.type = object.type ?? 0;
     message.score = object.score ?? 0;
     return message;
@@ -1169,7 +1239,10 @@ export const Request = {
       Request_LeaderboardScore.encode(message.leaderboardScore, writer.uint32(18).fork()).ldelim();
     }
     if (message.preloadImageForStreamSync !== undefined) {
-      Request_PreloadImageForStreamSync.encode(message.preloadImageForStreamSync, writer.uint32(26).fork()).ldelim();
+      Request_PreloadImageForStreamSync.encode(
+        message.preloadImageForStreamSync,
+        writer.uint32(26).fork(),
+      ).ldelim();
     }
     return writer;
   },
@@ -1188,7 +1261,10 @@ export const Request = {
           message.leaderboardScore = Request_LeaderboardScore.decode(reader, reader.uint32());
           break;
         case 3:
-          message.preloadImageForStreamSync = Request_PreloadImageForStreamSync.decode(reader, reader.uint32());
+          message.preloadImageForStreamSync = Request_PreloadImageForStreamSync.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
         default:
           reader.skipType(tag & 7);
@@ -1214,9 +1290,10 @@ export const Request = {
     const obj: any = {};
     message.connect !== undefined &&
       (obj.connect = message.connect ? Request_Connect.toJSON(message.connect) : undefined);
-    message.leaderboardScore !== undefined && (obj.leaderboardScore = message.leaderboardScore
-      ? Request_LeaderboardScore.toJSON(message.leaderboardScore)
-      : undefined);
+    message.leaderboardScore !== undefined &&
+      (obj.leaderboardScore = message.leaderboardScore
+        ? Request_LeaderboardScore.toJSON(message.leaderboardScore)
+        : undefined);
     message.preloadImageForStreamSync !== undefined &&
       (obj.preloadImageForStreamSync = message.preloadImageForStreamSync
         ? Request_PreloadImageForStreamSync.toJSON(message.preloadImageForStreamSync)
@@ -1226,14 +1303,16 @@ export const Request = {
 
   fromPartial<I extends Exact<DeepPartial<Request>, I>>(object: I): Request {
     const message = createBaseRequest();
-    message.connect = (object.connect !== undefined && object.connect !== null)
-      ? Request_Connect.fromPartial(object.connect)
-      : undefined;
-    message.leaderboardScore = (object.leaderboardScore !== undefined && object.leaderboardScore !== null)
-      ? Request_LeaderboardScore.fromPartial(object.leaderboardScore)
-      : undefined;
+    message.connect =
+      object.connect !== undefined && object.connect !== null
+        ? Request_Connect.fromPartial(object.connect)
+        : undefined;
+    message.leaderboardScore =
+      object.leaderboardScore !== undefined && object.leaderboardScore !== null
+        ? Request_LeaderboardScore.fromPartial(object.leaderboardScore)
+        : undefined;
     message.preloadImageForStreamSync =
-      (object.preloadImageForStreamSync !== undefined && object.preloadImageForStreamSync !== null)
+      object.preloadImageForStreamSync !== undefined && object.preloadImageForStreamSync !== null
         ? Request_PreloadImageForStreamSync.fromPartial(object.preloadImageForStreamSync)
         : undefined;
     return message;
@@ -1300,7 +1379,8 @@ export const Request_Connect = {
 
   fromPartial<I extends Exact<DeepPartial<Request_Connect>, I>>(object: I): Request_Connect {
     const message = createBaseRequest_Connect();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
+    message.user =
+      object.user !== undefined && object.user !== null ? User.fromPartial(object.user) : undefined;
     message.password = object.password ?? "";
     message.clientVersion = object.clientVersion ?? 0;
     return message;
@@ -1346,7 +1426,9 @@ export const Request_LeaderboardScore = {
   fromJSON(object: any): Request_LeaderboardScore {
     return {
       eventId: isSet(object.eventId) ? String(object.eventId) : "",
-      parameters: isSet(object.parameters) ? GameplayParameters.fromJSON(object.parameters) : undefined,
+      parameters: isSet(object.parameters)
+        ? GameplayParameters.fromJSON(object.parameters)
+        : undefined,
     };
   },
 
@@ -1354,16 +1436,21 @@ export const Request_LeaderboardScore = {
     const obj: any = {};
     message.eventId !== undefined && (obj.eventId = message.eventId);
     message.parameters !== undefined &&
-      (obj.parameters = message.parameters ? GameplayParameters.toJSON(message.parameters) : undefined);
+      (obj.parameters = message.parameters
+        ? GameplayParameters.toJSON(message.parameters)
+        : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Request_LeaderboardScore>, I>>(object: I): Request_LeaderboardScore {
+  fromPartial<I extends Exact<DeepPartial<Request_LeaderboardScore>, I>>(
+    object: I,
+  ): Request_LeaderboardScore {
     const message = createBaseRequest_LeaderboardScore();
     message.eventId = object.eventId ?? "";
-    message.parameters = (object.parameters !== undefined && object.parameters !== null)
-      ? GameplayParameters.fromPartial(object.parameters)
-      : undefined;
+    message.parameters =
+      object.parameters !== undefined && object.parameters !== null
+        ? GameplayParameters.fromPartial(object.parameters)
+        : undefined;
     return message;
   },
 };
@@ -1373,7 +1460,10 @@ function createBaseRequest_PreloadImageForStreamSync(): Request_PreloadImageForS
 }
 
 export const Request_PreloadImageForStreamSync = {
-  encode(message: Request_PreloadImageForStreamSync, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Request_PreloadImageForStreamSync,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.fileId !== undefined && message.fileId !== "") {
       writer.uint32(10).string(message.fileId);
     }
@@ -1463,7 +1553,10 @@ export const Response = {
       Response_Connect.encode(message.connect, writer.uint32(26).fork()).ldelim();
     }
     if (message.leaderboardScores !== undefined) {
-      Response_LeaderboardScores.encode(message.leaderboardScores, writer.uint32(34).fork()).ldelim();
+      Response_LeaderboardScores.encode(
+        message.leaderboardScores,
+        writer.uint32(34).fork(),
+      ).ldelim();
     }
     if (message.loadedSong !== undefined) {
       Response_LoadedSong.encode(message.loadedSong, writer.uint32(42).fork()).ldelim();
@@ -1522,12 +1615,16 @@ export const Response = {
   fromJSON(object: any): Response {
     return {
       type: isSet(object.type) ? response_ResponseTypeFromJSON(object.type) : 0,
-      respondingToPacketId: isSet(object.respondingToPacketId) ? String(object.respondingToPacketId) : "",
+      respondingToPacketId: isSet(object.respondingToPacketId)
+        ? String(object.respondingToPacketId)
+        : "",
       connect: isSet(object.connect) ? Response_Connect.fromJSON(object.connect) : undefined,
       leaderboardScores: isSet(object.leaderboardScores)
         ? Response_LeaderboardScores.fromJSON(object.leaderboardScores)
         : undefined,
-      loadedSong: isSet(object.loadedSong) ? Response_LoadedSong.fromJSON(object.loadedSong) : undefined,
+      loadedSong: isSet(object.loadedSong)
+        ? Response_LoadedSong.fromJSON(object.loadedSong)
+        : undefined,
       modal: isSet(object.modal) ? Response_Modal.fromJSON(object.modal) : undefined,
       modifyQualifier: isSet(object.modifyQualifier)
         ? Response_ModifyQualifier.fromJSON(object.modifyQualifier)
@@ -1541,18 +1638,24 @@ export const Response = {
   toJSON(message: Response): unknown {
     const obj: any = {};
     message.type !== undefined && (obj.type = response_ResponseTypeToJSON(message.type));
-    message.respondingToPacketId !== undefined && (obj.respondingToPacketId = message.respondingToPacketId);
+    message.respondingToPacketId !== undefined &&
+      (obj.respondingToPacketId = message.respondingToPacketId);
     message.connect !== undefined &&
       (obj.connect = message.connect ? Response_Connect.toJSON(message.connect) : undefined);
-    message.leaderboardScores !== undefined && (obj.leaderboardScores = message.leaderboardScores
-      ? Response_LeaderboardScores.toJSON(message.leaderboardScores)
-      : undefined);
+    message.leaderboardScores !== undefined &&
+      (obj.leaderboardScores = message.leaderboardScores
+        ? Response_LeaderboardScores.toJSON(message.leaderboardScores)
+        : undefined);
     message.loadedSong !== undefined &&
-      (obj.loadedSong = message.loadedSong ? Response_LoadedSong.toJSON(message.loadedSong) : undefined);
-    message.modal !== undefined && (obj.modal = message.modal ? Response_Modal.toJSON(message.modal) : undefined);
-    message.modifyQualifier !== undefined && (obj.modifyQualifier = message.modifyQualifier
-      ? Response_ModifyQualifier.toJSON(message.modifyQualifier)
-      : undefined);
+      (obj.loadedSong = message.loadedSong
+        ? Response_LoadedSong.toJSON(message.loadedSong)
+        : undefined);
+    message.modal !== undefined &&
+      (obj.modal = message.modal ? Response_Modal.toJSON(message.modal) : undefined);
+    message.modifyQualifier !== undefined &&
+      (obj.modifyQualifier = message.modifyQualifier
+        ? Response_ModifyQualifier.toJSON(message.modifyQualifier)
+        : undefined);
     message.imagePreloaded !== undefined &&
       (obj.imagePreloaded = message.imagePreloaded
         ? Response_ImagePreloaded.toJSON(message.imagePreloaded)
@@ -1564,24 +1667,30 @@ export const Response = {
     const message = createBaseResponse();
     message.type = object.type ?? 0;
     message.respondingToPacketId = object.respondingToPacketId ?? "";
-    message.connect = (object.connect !== undefined && object.connect !== null)
-      ? Response_Connect.fromPartial(object.connect)
-      : undefined;
-    message.leaderboardScores = (object.leaderboardScores !== undefined && object.leaderboardScores !== null)
-      ? Response_LeaderboardScores.fromPartial(object.leaderboardScores)
-      : undefined;
-    message.loadedSong = (object.loadedSong !== undefined && object.loadedSong !== null)
-      ? Response_LoadedSong.fromPartial(object.loadedSong)
-      : undefined;
-    message.modal = (object.modal !== undefined && object.modal !== null)
-      ? Response_Modal.fromPartial(object.modal)
-      : undefined;
-    message.modifyQualifier = (object.modifyQualifier !== undefined && object.modifyQualifier !== null)
-      ? Response_ModifyQualifier.fromPartial(object.modifyQualifier)
-      : undefined;
-    message.imagePreloaded = (object.imagePreloaded !== undefined && object.imagePreloaded !== null)
-      ? Response_ImagePreloaded.fromPartial(object.imagePreloaded)
-      : undefined;
+    message.connect =
+      object.connect !== undefined && object.connect !== null
+        ? Response_Connect.fromPartial(object.connect)
+        : undefined;
+    message.leaderboardScores =
+      object.leaderboardScores !== undefined && object.leaderboardScores !== null
+        ? Response_LeaderboardScores.fromPartial(object.leaderboardScores)
+        : undefined;
+    message.loadedSong =
+      object.loadedSong !== undefined && object.loadedSong !== null
+        ? Response_LoadedSong.fromPartial(object.loadedSong)
+        : undefined;
+    message.modal =
+      object.modal !== undefined && object.modal !== null
+        ? Response_Modal.fromPartial(object.modal)
+        : undefined;
+    message.modifyQualifier =
+      object.modifyQualifier !== undefined && object.modifyQualifier !== null
+        ? Response_ModifyQualifier.fromPartial(object.modifyQualifier)
+        : undefined;
+    message.imagePreloaded =
+      object.imagePreloaded !== undefined && object.imagePreloaded !== null
+        ? Response_ImagePreloaded.fromPartial(object.imagePreloaded)
+        : undefined;
     return message;
   },
 };
@@ -1645,7 +1754,8 @@ export const Response_Connect = {
 
   toJSON(message: Response_Connect): unknown {
     const obj: any = {};
-    message.state !== undefined && (obj.state = message.state ? State.toJSON(message.state) : undefined);
+    message.state !== undefined &&
+      (obj.state = message.state ? State.toJSON(message.state) : undefined);
     message.selfGuid !== undefined && (obj.selfGuid = message.selfGuid);
     message.serverVersion !== undefined && (obj.serverVersion = Math.round(message.serverVersion));
     message.message !== undefined && (obj.message = message.message);
@@ -1654,7 +1764,10 @@ export const Response_Connect = {
 
   fromPartial<I extends Exact<DeepPartial<Response_Connect>, I>>(object: I): Response_Connect {
     const message = createBaseResponse_Connect();
-    message.state = (object.state !== undefined && object.state !== null) ? State.fromPartial(object.state) : undefined;
+    message.state =
+      object.state !== undefined && object.state !== null
+        ? State.fromPartial(object.state)
+        : undefined;
     message.selfGuid = object.selfGuid ?? "";
     message.serverVersion = object.serverVersion ?? 0;
     message.message = object.message ?? "";
@@ -1667,7 +1780,10 @@ function createBaseResponse_LeaderboardScores(): Response_LeaderboardScores {
 }
 
 export const Response_LeaderboardScores = {
-  encode(message: Response_LeaderboardScores, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Response_LeaderboardScores,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.scores !== undefined && message.scores.length !== 0) {
       for (const v of message.scores) {
         LeaderboardScore.encode(v!, writer.uint32(10).fork()).ldelim();
@@ -1695,20 +1811,26 @@ export const Response_LeaderboardScores = {
   },
 
   fromJSON(object: any): Response_LeaderboardScores {
-    return { scores: Array.isArray(object?.scores) ? object.scores.map((e: any) => LeaderboardScore.fromJSON(e)) : [] };
+    return {
+      scores: Array.isArray(object?.scores)
+        ? object.scores.map((e: any) => LeaderboardScore.fromJSON(e))
+        : [],
+    };
   },
 
   toJSON(message: Response_LeaderboardScores): unknown {
     const obj: any = {};
     if (message.scores) {
-      obj.scores = message.scores.map((e) => e ? LeaderboardScore.toJSON(e) : undefined);
+      obj.scores = message.scores.map((e) => (e ? LeaderboardScore.toJSON(e) : undefined));
     } else {
       obj.scores = [];
     }
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Response_LeaderboardScores>, I>>(object: I): Response_LeaderboardScores {
+  fromPartial<I extends Exact<DeepPartial<Response_LeaderboardScores>, I>>(
+    object: I,
+  ): Response_LeaderboardScores {
     const message = createBaseResponse_LeaderboardScores();
     message.scores = object.scores?.map((e) => LeaderboardScore.fromPartial(e)) || [];
     return message;
@@ -1751,15 +1873,19 @@ export const Response_LoadedSong = {
 
   toJSON(message: Response_LoadedSong): unknown {
     const obj: any = {};
-    message.level !== undefined && (obj.level = message.level ? PreviewBeatmapLevel.toJSON(message.level) : undefined);
+    message.level !== undefined &&
+      (obj.level = message.level ? PreviewBeatmapLevel.toJSON(message.level) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Response_LoadedSong>, I>>(object: I): Response_LoadedSong {
+  fromPartial<I extends Exact<DeepPartial<Response_LoadedSong>, I>>(
+    object: I,
+  ): Response_LoadedSong {
     const message = createBaseResponse_LoadedSong();
-    message.level = (object.level !== undefined && object.level !== null)
-      ? PreviewBeatmapLevel.fromPartial(object.level)
-      : undefined;
+    message.level =
+      object.level !== undefined && object.level !== null
+        ? PreviewBeatmapLevel.fromPartial(object.level)
+        : undefined;
     return message;
   },
 };
@@ -1862,7 +1988,9 @@ export const Response_ModifyQualifier = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Response_ModifyQualifier>, I>>(object: I): Response_ModifyQualifier {
+  fromPartial<I extends Exact<DeepPartial<Response_ModifyQualifier>, I>>(
+    object: I,
+  ): Response_ModifyQualifier {
     const message = createBaseResponse_ModifyQualifier();
     message.message = object.message ?? "";
     return message;
@@ -1909,7 +2037,9 @@ export const Response_ImagePreloaded = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Response_ImagePreloaded>, I>>(object: I): Response_ImagePreloaded {
+  fromPartial<I extends Exact<DeepPartial<Response_ImagePreloaded>, I>>(
+    object: I,
+  ): Response_ImagePreloaded {
     const message = createBaseResponse_ImagePreloaded();
     message.fileId = object.fileId ?? "";
     return message;
@@ -1962,7 +2092,8 @@ export const Acknowledgement = {
   toJSON(message: Acknowledgement): unknown {
     const obj: any = {};
     message.packetId !== undefined && (obj.packetId = message.packetId);
-    message.type !== undefined && (obj.type = acknowledgement_AcknowledgementTypeToJSON(message.type));
+    message.type !== undefined &&
+      (obj.type = acknowledgement_AcknowledgementTypeToJSON(message.type));
     return obj;
   },
 
@@ -2014,7 +2145,9 @@ export const ForwardingPacket = {
 
   fromJSON(object: any): ForwardingPacket {
     return {
-      forwardTo: Array.isArray(object?.forwardTo) ? object.forwardTo.map((e: any) => String(e)) : [],
+      forwardTo: Array.isArray(object?.forwardTo)
+        ? object.forwardTo.map((e: any) => String(e))
+        : [],
       packet: isSet(object.packet) ? Packet.fromJSON(object.packet) : undefined,
     };
   },
@@ -2026,16 +2159,18 @@ export const ForwardingPacket = {
     } else {
       obj.forwardTo = [];
     }
-    message.packet !== undefined && (obj.packet = message.packet ? Packet.toJSON(message.packet) : undefined);
+    message.packet !== undefined &&
+      (obj.packet = message.packet ? Packet.toJSON(message.packet) : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<ForwardingPacket>, I>>(object: I): ForwardingPacket {
     const message = createBaseForwardingPacket();
     message.forwardTo = object.forwardTo?.map((e) => e) || [];
-    message.packet = (object.packet !== undefined && object.packet !== null)
-      ? Packet.fromPartial(object.packet)
-      : undefined;
+    message.packet =
+      object.packet !== undefined && object.packet !== null
+        ? Packet.fromPartial(object.packet)
+        : undefined;
     return message;
   },
 };
@@ -2077,13 +2212,22 @@ export const Event = {
       Event_MatchDeletedEvent.encode(message.matchDeletedEvent, writer.uint32(66).fork()).ldelim();
     }
     if (message.qualifierCreatedEvent !== undefined) {
-      Event_QualifierCreatedEvent.encode(message.qualifierCreatedEvent, writer.uint32(74).fork()).ldelim();
+      Event_QualifierCreatedEvent.encode(
+        message.qualifierCreatedEvent,
+        writer.uint32(74).fork(),
+      ).ldelim();
     }
     if (message.qualifierUpdatedEvent !== undefined) {
-      Event_QualifierUpdatedEvent.encode(message.qualifierUpdatedEvent, writer.uint32(82).fork()).ldelim();
+      Event_QualifierUpdatedEvent.encode(
+        message.qualifierUpdatedEvent,
+        writer.uint32(82).fork(),
+      ).ldelim();
     }
     if (message.qualifierDeletedEvent !== undefined) {
-      Event_QualifierDeletedEvent.encode(message.qualifierDeletedEvent, writer.uint32(90).fork()).ldelim();
+      Event_QualifierDeletedEvent.encode(
+        message.qualifierDeletedEvent,
+        writer.uint32(90).fork(),
+      ).ldelim();
     }
     if (message.hostAddedEvent !== undefined) {
       Event_HostAddedEvent.encode(message.hostAddedEvent, writer.uint32(98).fork()).ldelim();
@@ -2120,13 +2264,22 @@ export const Event = {
           message.matchDeletedEvent = Event_MatchDeletedEvent.decode(reader, reader.uint32());
           break;
         case 9:
-          message.qualifierCreatedEvent = Event_QualifierCreatedEvent.decode(reader, reader.uint32());
+          message.qualifierCreatedEvent = Event_QualifierCreatedEvent.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
         case 10:
-          message.qualifierUpdatedEvent = Event_QualifierUpdatedEvent.decode(reader, reader.uint32());
+          message.qualifierUpdatedEvent = Event_QualifierUpdatedEvent.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
         case 11:
-          message.qualifierDeletedEvent = Event_QualifierDeletedEvent.decode(reader, reader.uint32());
+          message.qualifierDeletedEvent = Event_QualifierDeletedEvent.decode(
+            reader,
+            reader.uint32(),
+          );
           break;
         case 12:
           message.hostAddedEvent = Event_HostAddedEvent.decode(reader, reader.uint32());
@@ -2144,11 +2297,15 @@ export const Event = {
 
   fromJSON(object: any): Event {
     return {
-      userAddedEvent: isSet(object.userAddedEvent) ? Event_UserAddedEvent.fromJSON(object.userAddedEvent) : undefined,
+      userAddedEvent: isSet(object.userAddedEvent)
+        ? Event_UserAddedEvent.fromJSON(object.userAddedEvent)
+        : undefined,
       userUpdatedEvent: isSet(object.userUpdatedEvent)
         ? Event_UserUpdatedEvent.fromJSON(object.userUpdatedEvent)
         : undefined,
-      userLeftEvent: isSet(object.userLeftEvent) ? Event_UserLeftEvent.fromJSON(object.userLeftEvent) : undefined,
+      userLeftEvent: isSet(object.userLeftEvent)
+        ? Event_UserLeftEvent.fromJSON(object.userLeftEvent)
+        : undefined,
       matchCreatedEvent: isSet(object.matchCreatedEvent)
         ? Event_MatchCreatedEvent.fromJSON(object.matchCreatedEvent)
         : undefined,
@@ -2167,7 +2324,9 @@ export const Event = {
       qualifierDeletedEvent: isSet(object.qualifierDeletedEvent)
         ? Event_QualifierDeletedEvent.fromJSON(object.qualifierDeletedEvent)
         : undefined,
-      hostAddedEvent: isSet(object.hostAddedEvent) ? Event_HostAddedEvent.fromJSON(object.hostAddedEvent) : undefined,
+      hostAddedEvent: isSet(object.hostAddedEvent)
+        ? Event_HostAddedEvent.fromJSON(object.hostAddedEvent)
+        : undefined,
       hostDeletedEvent: isSet(object.hostDeletedEvent)
         ? Event_HostDeletedEvent.fromJSON(object.hostDeletedEvent)
         : undefined,
@@ -2177,76 +2336,98 @@ export const Event = {
   toJSON(message: Event): unknown {
     const obj: any = {};
     message.userAddedEvent !== undefined &&
-      (obj.userAddedEvent = message.userAddedEvent ? Event_UserAddedEvent.toJSON(message.userAddedEvent) : undefined);
-    message.userUpdatedEvent !== undefined && (obj.userUpdatedEvent = message.userUpdatedEvent
-      ? Event_UserUpdatedEvent.toJSON(message.userUpdatedEvent)
-      : undefined);
+      (obj.userAddedEvent = message.userAddedEvent
+        ? Event_UserAddedEvent.toJSON(message.userAddedEvent)
+        : undefined);
+    message.userUpdatedEvent !== undefined &&
+      (obj.userUpdatedEvent = message.userUpdatedEvent
+        ? Event_UserUpdatedEvent.toJSON(message.userUpdatedEvent)
+        : undefined);
     message.userLeftEvent !== undefined &&
-      (obj.userLeftEvent = message.userLeftEvent ? Event_UserLeftEvent.toJSON(message.userLeftEvent) : undefined);
-    message.matchCreatedEvent !== undefined && (obj.matchCreatedEvent = message.matchCreatedEvent
-      ? Event_MatchCreatedEvent.toJSON(message.matchCreatedEvent)
-      : undefined);
-    message.matchUpdatedEvent !== undefined && (obj.matchUpdatedEvent = message.matchUpdatedEvent
-      ? Event_MatchUpdatedEvent.toJSON(message.matchUpdatedEvent)
-      : undefined);
-    message.matchDeletedEvent !== undefined && (obj.matchDeletedEvent = message.matchDeletedEvent
-      ? Event_MatchDeletedEvent.toJSON(message.matchDeletedEvent)
-      : undefined);
-    message.qualifierCreatedEvent !== undefined && (obj.qualifierCreatedEvent = message.qualifierCreatedEvent
-      ? Event_QualifierCreatedEvent.toJSON(message.qualifierCreatedEvent)
-      : undefined);
-    message.qualifierUpdatedEvent !== undefined && (obj.qualifierUpdatedEvent = message.qualifierUpdatedEvent
-      ? Event_QualifierUpdatedEvent.toJSON(message.qualifierUpdatedEvent)
-      : undefined);
-    message.qualifierDeletedEvent !== undefined && (obj.qualifierDeletedEvent = message.qualifierDeletedEvent
-      ? Event_QualifierDeletedEvent.toJSON(message.qualifierDeletedEvent)
-      : undefined);
+      (obj.userLeftEvent = message.userLeftEvent
+        ? Event_UserLeftEvent.toJSON(message.userLeftEvent)
+        : undefined);
+    message.matchCreatedEvent !== undefined &&
+      (obj.matchCreatedEvent = message.matchCreatedEvent
+        ? Event_MatchCreatedEvent.toJSON(message.matchCreatedEvent)
+        : undefined);
+    message.matchUpdatedEvent !== undefined &&
+      (obj.matchUpdatedEvent = message.matchUpdatedEvent
+        ? Event_MatchUpdatedEvent.toJSON(message.matchUpdatedEvent)
+        : undefined);
+    message.matchDeletedEvent !== undefined &&
+      (obj.matchDeletedEvent = message.matchDeletedEvent
+        ? Event_MatchDeletedEvent.toJSON(message.matchDeletedEvent)
+        : undefined);
+    message.qualifierCreatedEvent !== undefined &&
+      (obj.qualifierCreatedEvent = message.qualifierCreatedEvent
+        ? Event_QualifierCreatedEvent.toJSON(message.qualifierCreatedEvent)
+        : undefined);
+    message.qualifierUpdatedEvent !== undefined &&
+      (obj.qualifierUpdatedEvent = message.qualifierUpdatedEvent
+        ? Event_QualifierUpdatedEvent.toJSON(message.qualifierUpdatedEvent)
+        : undefined);
+    message.qualifierDeletedEvent !== undefined &&
+      (obj.qualifierDeletedEvent = message.qualifierDeletedEvent
+        ? Event_QualifierDeletedEvent.toJSON(message.qualifierDeletedEvent)
+        : undefined);
     message.hostAddedEvent !== undefined &&
-      (obj.hostAddedEvent = message.hostAddedEvent ? Event_HostAddedEvent.toJSON(message.hostAddedEvent) : undefined);
-    message.hostDeletedEvent !== undefined && (obj.hostDeletedEvent = message.hostDeletedEvent
-      ? Event_HostDeletedEvent.toJSON(message.hostDeletedEvent)
-      : undefined);
+      (obj.hostAddedEvent = message.hostAddedEvent
+        ? Event_HostAddedEvent.toJSON(message.hostAddedEvent)
+        : undefined);
+    message.hostDeletedEvent !== undefined &&
+      (obj.hostDeletedEvent = message.hostDeletedEvent
+        ? Event_HostDeletedEvent.toJSON(message.hostDeletedEvent)
+        : undefined);
     return obj;
   },
 
   fromPartial<I extends Exact<DeepPartial<Event>, I>>(object: I): Event {
     const message = createBaseEvent();
-    message.userAddedEvent = (object.userAddedEvent !== undefined && object.userAddedEvent !== null)
-      ? Event_UserAddedEvent.fromPartial(object.userAddedEvent)
-      : undefined;
-    message.userUpdatedEvent = (object.userUpdatedEvent !== undefined && object.userUpdatedEvent !== null)
-      ? Event_UserUpdatedEvent.fromPartial(object.userUpdatedEvent)
-      : undefined;
-    message.userLeftEvent = (object.userLeftEvent !== undefined && object.userLeftEvent !== null)
-      ? Event_UserLeftEvent.fromPartial(object.userLeftEvent)
-      : undefined;
-    message.matchCreatedEvent = (object.matchCreatedEvent !== undefined && object.matchCreatedEvent !== null)
-      ? Event_MatchCreatedEvent.fromPartial(object.matchCreatedEvent)
-      : undefined;
-    message.matchUpdatedEvent = (object.matchUpdatedEvent !== undefined && object.matchUpdatedEvent !== null)
-      ? Event_MatchUpdatedEvent.fromPartial(object.matchUpdatedEvent)
-      : undefined;
-    message.matchDeletedEvent = (object.matchDeletedEvent !== undefined && object.matchDeletedEvent !== null)
-      ? Event_MatchDeletedEvent.fromPartial(object.matchDeletedEvent)
-      : undefined;
+    message.userAddedEvent =
+      object.userAddedEvent !== undefined && object.userAddedEvent !== null
+        ? Event_UserAddedEvent.fromPartial(object.userAddedEvent)
+        : undefined;
+    message.userUpdatedEvent =
+      object.userUpdatedEvent !== undefined && object.userUpdatedEvent !== null
+        ? Event_UserUpdatedEvent.fromPartial(object.userUpdatedEvent)
+        : undefined;
+    message.userLeftEvent =
+      object.userLeftEvent !== undefined && object.userLeftEvent !== null
+        ? Event_UserLeftEvent.fromPartial(object.userLeftEvent)
+        : undefined;
+    message.matchCreatedEvent =
+      object.matchCreatedEvent !== undefined && object.matchCreatedEvent !== null
+        ? Event_MatchCreatedEvent.fromPartial(object.matchCreatedEvent)
+        : undefined;
+    message.matchUpdatedEvent =
+      object.matchUpdatedEvent !== undefined && object.matchUpdatedEvent !== null
+        ? Event_MatchUpdatedEvent.fromPartial(object.matchUpdatedEvent)
+        : undefined;
+    message.matchDeletedEvent =
+      object.matchDeletedEvent !== undefined && object.matchDeletedEvent !== null
+        ? Event_MatchDeletedEvent.fromPartial(object.matchDeletedEvent)
+        : undefined;
     message.qualifierCreatedEvent =
-      (object.qualifierCreatedEvent !== undefined && object.qualifierCreatedEvent !== null)
+      object.qualifierCreatedEvent !== undefined && object.qualifierCreatedEvent !== null
         ? Event_QualifierCreatedEvent.fromPartial(object.qualifierCreatedEvent)
         : undefined;
     message.qualifierUpdatedEvent =
-      (object.qualifierUpdatedEvent !== undefined && object.qualifierUpdatedEvent !== null)
+      object.qualifierUpdatedEvent !== undefined && object.qualifierUpdatedEvent !== null
         ? Event_QualifierUpdatedEvent.fromPartial(object.qualifierUpdatedEvent)
         : undefined;
     message.qualifierDeletedEvent =
-      (object.qualifierDeletedEvent !== undefined && object.qualifierDeletedEvent !== null)
+      object.qualifierDeletedEvent !== undefined && object.qualifierDeletedEvent !== null
         ? Event_QualifierDeletedEvent.fromPartial(object.qualifierDeletedEvent)
         : undefined;
-    message.hostAddedEvent = (object.hostAddedEvent !== undefined && object.hostAddedEvent !== null)
-      ? Event_HostAddedEvent.fromPartial(object.hostAddedEvent)
-      : undefined;
-    message.hostDeletedEvent = (object.hostDeletedEvent !== undefined && object.hostDeletedEvent !== null)
-      ? Event_HostDeletedEvent.fromPartial(object.hostDeletedEvent)
-      : undefined;
+    message.hostAddedEvent =
+      object.hostAddedEvent !== undefined && object.hostAddedEvent !== null
+        ? Event_HostAddedEvent.fromPartial(object.hostAddedEvent)
+        : undefined;
+    message.hostDeletedEvent =
+      object.hostDeletedEvent !== undefined && object.hostDeletedEvent !== null
+        ? Event_HostDeletedEvent.fromPartial(object.hostDeletedEvent)
+        : undefined;
     return message;
   },
 };
@@ -2291,9 +2472,12 @@ export const Event_UserAddedEvent = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_UserAddedEvent>, I>>(object: I): Event_UserAddedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_UserAddedEvent>, I>>(
+    object: I,
+  ): Event_UserAddedEvent {
     const message = createBaseEvent_UserAddedEvent();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
+    message.user =
+      object.user !== undefined && object.user !== null ? User.fromPartial(object.user) : undefined;
     return message;
   },
 };
@@ -2338,9 +2522,12 @@ export const Event_UserUpdatedEvent = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_UserUpdatedEvent>, I>>(object: I): Event_UserUpdatedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_UserUpdatedEvent>, I>>(
+    object: I,
+  ): Event_UserUpdatedEvent {
     const message = createBaseEvent_UserUpdatedEvent();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
+    message.user =
+      object.user !== undefined && object.user !== null ? User.fromPartial(object.user) : undefined;
     return message;
   },
 };
@@ -2385,9 +2572,12 @@ export const Event_UserLeftEvent = {
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_UserLeftEvent>, I>>(object: I): Event_UserLeftEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_UserLeftEvent>, I>>(
+    object: I,
+  ): Event_UserLeftEvent {
     const message = createBaseEvent_UserLeftEvent();
-    message.user = (object.user !== undefined && object.user !== null) ? User.fromPartial(object.user) : undefined;
+    message.user =
+      object.user !== undefined && object.user !== null ? User.fromPartial(object.user) : undefined;
     return message;
   },
 };
@@ -2428,13 +2618,19 @@ export const Event_MatchCreatedEvent = {
 
   toJSON(message: Event_MatchCreatedEvent): unknown {
     const obj: any = {};
-    message.match !== undefined && (obj.match = message.match ? Match.toJSON(message.match) : undefined);
+    message.match !== undefined &&
+      (obj.match = message.match ? Match.toJSON(message.match) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_MatchCreatedEvent>, I>>(object: I): Event_MatchCreatedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_MatchCreatedEvent>, I>>(
+    object: I,
+  ): Event_MatchCreatedEvent {
     const message = createBaseEvent_MatchCreatedEvent();
-    message.match = (object.match !== undefined && object.match !== null) ? Match.fromPartial(object.match) : undefined;
+    message.match =
+      object.match !== undefined && object.match !== null
+        ? Match.fromPartial(object.match)
+        : undefined;
     return message;
   },
 };
@@ -2475,13 +2671,19 @@ export const Event_MatchUpdatedEvent = {
 
   toJSON(message: Event_MatchUpdatedEvent): unknown {
     const obj: any = {};
-    message.match !== undefined && (obj.match = message.match ? Match.toJSON(message.match) : undefined);
+    message.match !== undefined &&
+      (obj.match = message.match ? Match.toJSON(message.match) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_MatchUpdatedEvent>, I>>(object: I): Event_MatchUpdatedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_MatchUpdatedEvent>, I>>(
+    object: I,
+  ): Event_MatchUpdatedEvent {
     const message = createBaseEvent_MatchUpdatedEvent();
-    message.match = (object.match !== undefined && object.match !== null) ? Match.fromPartial(object.match) : undefined;
+    message.match =
+      object.match !== undefined && object.match !== null
+        ? Match.fromPartial(object.match)
+        : undefined;
     return message;
   },
 };
@@ -2522,13 +2724,19 @@ export const Event_MatchDeletedEvent = {
 
   toJSON(message: Event_MatchDeletedEvent): unknown {
     const obj: any = {};
-    message.match !== undefined && (obj.match = message.match ? Match.toJSON(message.match) : undefined);
+    message.match !== undefined &&
+      (obj.match = message.match ? Match.toJSON(message.match) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_MatchDeletedEvent>, I>>(object: I): Event_MatchDeletedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_MatchDeletedEvent>, I>>(
+    object: I,
+  ): Event_MatchDeletedEvent {
     const message = createBaseEvent_MatchDeletedEvent();
-    message.match = (object.match !== undefined && object.match !== null) ? Match.fromPartial(object.match) : undefined;
+    message.match =
+      object.match !== undefined && object.match !== null
+        ? Match.fromPartial(object.match)
+        : undefined;
     return message;
   },
 };
@@ -2538,7 +2746,10 @@ function createBaseEvent_QualifierCreatedEvent(): Event_QualifierCreatedEvent {
 }
 
 export const Event_QualifierCreatedEvent = {
-  encode(message: Event_QualifierCreatedEvent, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Event_QualifierCreatedEvent,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.event !== undefined) {
       QualifierEvent.encode(message.event, writer.uint32(10).fork()).ldelim();
     }
@@ -2569,15 +2780,19 @@ export const Event_QualifierCreatedEvent = {
 
   toJSON(message: Event_QualifierCreatedEvent): unknown {
     const obj: any = {};
-    message.event !== undefined && (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
+    message.event !== undefined &&
+      (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_QualifierCreatedEvent>, I>>(object: I): Event_QualifierCreatedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_QualifierCreatedEvent>, I>>(
+    object: I,
+  ): Event_QualifierCreatedEvent {
     const message = createBaseEvent_QualifierCreatedEvent();
-    message.event = (object.event !== undefined && object.event !== null)
-      ? QualifierEvent.fromPartial(object.event)
-      : undefined;
+    message.event =
+      object.event !== undefined && object.event !== null
+        ? QualifierEvent.fromPartial(object.event)
+        : undefined;
     return message;
   },
 };
@@ -2587,7 +2802,10 @@ function createBaseEvent_QualifierUpdatedEvent(): Event_QualifierUpdatedEvent {
 }
 
 export const Event_QualifierUpdatedEvent = {
-  encode(message: Event_QualifierUpdatedEvent, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Event_QualifierUpdatedEvent,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.event !== undefined) {
       QualifierEvent.encode(message.event, writer.uint32(10).fork()).ldelim();
     }
@@ -2618,15 +2836,19 @@ export const Event_QualifierUpdatedEvent = {
 
   toJSON(message: Event_QualifierUpdatedEvent): unknown {
     const obj: any = {};
-    message.event !== undefined && (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
+    message.event !== undefined &&
+      (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_QualifierUpdatedEvent>, I>>(object: I): Event_QualifierUpdatedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_QualifierUpdatedEvent>, I>>(
+    object: I,
+  ): Event_QualifierUpdatedEvent {
     const message = createBaseEvent_QualifierUpdatedEvent();
-    message.event = (object.event !== undefined && object.event !== null)
-      ? QualifierEvent.fromPartial(object.event)
-      : undefined;
+    message.event =
+      object.event !== undefined && object.event !== null
+        ? QualifierEvent.fromPartial(object.event)
+        : undefined;
     return message;
   },
 };
@@ -2636,7 +2858,10 @@ function createBaseEvent_QualifierDeletedEvent(): Event_QualifierDeletedEvent {
 }
 
 export const Event_QualifierDeletedEvent = {
-  encode(message: Event_QualifierDeletedEvent, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(
+    message: Event_QualifierDeletedEvent,
+    writer: _m0.Writer = _m0.Writer.create(),
+  ): _m0.Writer {
     if (message.event !== undefined) {
       QualifierEvent.encode(message.event, writer.uint32(10).fork()).ldelim();
     }
@@ -2667,15 +2892,19 @@ export const Event_QualifierDeletedEvent = {
 
   toJSON(message: Event_QualifierDeletedEvent): unknown {
     const obj: any = {};
-    message.event !== undefined && (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
+    message.event !== undefined &&
+      (obj.event = message.event ? QualifierEvent.toJSON(message.event) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_QualifierDeletedEvent>, I>>(object: I): Event_QualifierDeletedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_QualifierDeletedEvent>, I>>(
+    object: I,
+  ): Event_QualifierDeletedEvent {
     const message = createBaseEvent_QualifierDeletedEvent();
-    message.event = (object.event !== undefined && object.event !== null)
-      ? QualifierEvent.fromPartial(object.event)
-      : undefined;
+    message.event =
+      object.event !== undefined && object.event !== null
+        ? QualifierEvent.fromPartial(object.event)
+        : undefined;
     return message;
   },
 };
@@ -2716,15 +2945,19 @@ export const Event_HostAddedEvent = {
 
   toJSON(message: Event_HostAddedEvent): unknown {
     const obj: any = {};
-    message.server !== undefined && (obj.server = message.server ? CoreServer.toJSON(message.server) : undefined);
+    message.server !== undefined &&
+      (obj.server = message.server ? CoreServer.toJSON(message.server) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_HostAddedEvent>, I>>(object: I): Event_HostAddedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_HostAddedEvent>, I>>(
+    object: I,
+  ): Event_HostAddedEvent {
     const message = createBaseEvent_HostAddedEvent();
-    message.server = (object.server !== undefined && object.server !== null)
-      ? CoreServer.fromPartial(object.server)
-      : undefined;
+    message.server =
+      object.server !== undefined && object.server !== null
+        ? CoreServer.fromPartial(object.server)
+        : undefined;
     return message;
   },
 };
@@ -2765,15 +2998,19 @@ export const Event_HostDeletedEvent = {
 
   toJSON(message: Event_HostDeletedEvent): unknown {
     const obj: any = {};
-    message.server !== undefined && (obj.server = message.server ? CoreServer.toJSON(message.server) : undefined);
+    message.server !== undefined &&
+      (obj.server = message.server ? CoreServer.toJSON(message.server) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<Event_HostDeletedEvent>, I>>(object: I): Event_HostDeletedEvent {
+  fromPartial<I extends Exact<DeepPartial<Event_HostDeletedEvent>, I>>(
+    object: I,
+  ): Event_HostDeletedEvent {
     const message = createBaseEvent_HostDeletedEvent();
-    message.server = (object.server !== undefined && object.server !== null)
-      ? CoreServer.fromPartial(object.server)
-      : undefined;
+    message.server =
+      object.server !== undefined && object.server !== null
+        ? CoreServer.fromPartial(object.server)
+        : undefined;
     return message;
   },
 };
@@ -2870,8 +3107,12 @@ export const Packet = {
     return {
       id: isSet(object.id) ? String(object.id) : "",
       from: isSet(object.from) ? String(object.from) : "",
-      acknowledgement: isSet(object.acknowledgement) ? Acknowledgement.fromJSON(object.acknowledgement) : undefined,
-      forwardingPacket: isSet(object.forwardingPacket) ? ForwardingPacket.fromJSON(object.forwardingPacket) : undefined,
+      acknowledgement: isSet(object.acknowledgement)
+        ? Acknowledgement.fromJSON(object.acknowledgement)
+        : undefined,
+      forwardingPacket: isSet(object.forwardingPacket)
+        ? ForwardingPacket.fromJSON(object.forwardingPacket)
+        : undefined,
       command: isSet(object.command) ? Command.fromJSON(object.command) : undefined,
       push: isSet(object.push) ? Push.fromJSON(object.push) : undefined,
       request: isSet(object.request) ? Request.fromJSON(object.request) : undefined,
@@ -2885,14 +3126,22 @@ export const Packet = {
     message.id !== undefined && (obj.id = message.id);
     message.from !== undefined && (obj.from = message.from);
     message.acknowledgement !== undefined &&
-      (obj.acknowledgement = message.acknowledgement ? Acknowledgement.toJSON(message.acknowledgement) : undefined);
+      (obj.acknowledgement = message.acknowledgement
+        ? Acknowledgement.toJSON(message.acknowledgement)
+        : undefined);
     message.forwardingPacket !== undefined &&
-      (obj.forwardingPacket = message.forwardingPacket ? ForwardingPacket.toJSON(message.forwardingPacket) : undefined);
-    message.command !== undefined && (obj.command = message.command ? Command.toJSON(message.command) : undefined);
+      (obj.forwardingPacket = message.forwardingPacket
+        ? ForwardingPacket.toJSON(message.forwardingPacket)
+        : undefined);
+    message.command !== undefined &&
+      (obj.command = message.command ? Command.toJSON(message.command) : undefined);
     message.push !== undefined && (obj.push = message.push ? Push.toJSON(message.push) : undefined);
-    message.request !== undefined && (obj.request = message.request ? Request.toJSON(message.request) : undefined);
-    message.response !== undefined && (obj.response = message.response ? Response.toJSON(message.response) : undefined);
-    message.event !== undefined && (obj.event = message.event ? Event.toJSON(message.event) : undefined);
+    message.request !== undefined &&
+      (obj.request = message.request ? Request.toJSON(message.request) : undefined);
+    message.response !== undefined &&
+      (obj.response = message.response ? Response.toJSON(message.response) : undefined);
+    message.event !== undefined &&
+      (obj.event = message.event ? Event.toJSON(message.event) : undefined);
     return obj;
   },
 
@@ -2900,23 +3149,32 @@ export const Packet = {
     const message = createBasePacket();
     message.id = object.id ?? "";
     message.from = object.from ?? "";
-    message.acknowledgement = (object.acknowledgement !== undefined && object.acknowledgement !== null)
-      ? Acknowledgement.fromPartial(object.acknowledgement)
-      : undefined;
-    message.forwardingPacket = (object.forwardingPacket !== undefined && object.forwardingPacket !== null)
-      ? ForwardingPacket.fromPartial(object.forwardingPacket)
-      : undefined;
-    message.command = (object.command !== undefined && object.command !== null)
-      ? Command.fromPartial(object.command)
-      : undefined;
-    message.push = (object.push !== undefined && object.push !== null) ? Push.fromPartial(object.push) : undefined;
-    message.request = (object.request !== undefined && object.request !== null)
-      ? Request.fromPartial(object.request)
-      : undefined;
-    message.response = (object.response !== undefined && object.response !== null)
-      ? Response.fromPartial(object.response)
-      : undefined;
-    message.event = (object.event !== undefined && object.event !== null) ? Event.fromPartial(object.event) : undefined;
+    message.acknowledgement =
+      object.acknowledgement !== undefined && object.acknowledgement !== null
+        ? Acknowledgement.fromPartial(object.acknowledgement)
+        : undefined;
+    message.forwardingPacket =
+      object.forwardingPacket !== undefined && object.forwardingPacket !== null
+        ? ForwardingPacket.fromPartial(object.forwardingPacket)
+        : undefined;
+    message.command =
+      object.command !== undefined && object.command !== null
+        ? Command.fromPartial(object.command)
+        : undefined;
+    message.push =
+      object.push !== undefined && object.push !== null ? Push.fromPartial(object.push) : undefined;
+    message.request =
+      object.request !== undefined && object.request !== null
+        ? Request.fromPartial(object.request)
+        : undefined;
+    message.response =
+      object.response !== undefined && object.response !== null
+        ? Response.fromPartial(object.response)
+        : undefined;
+    message.event =
+      object.event !== undefined && object.event !== null
+        ? Event.fromPartial(object.event)
+        : undefined;
     return message;
   },
 };
@@ -2967,13 +3225,19 @@ function base64FromBytes(arr: Uint8Array): string {
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 
-export type DeepPartial<T> = T extends Builtin ? T
-  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
-  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
-  : Partial<T>;
+export type DeepPartial<T> = T extends Builtin
+  ? T
+  : T extends Array<infer U>
+    ? Array<DeepPartial<U>>
+    : T extends ReadonlyArray<infer U>
+      ? ReadonlyArray<DeepPartial<U>>
+      : T extends {}
+        ? { [K in keyof T]?: DeepPartial<T[K]> }
+        : Partial<T>;
 
 type KeysOfUnion<T> = T extends T ? keyof T : never;
-export type Exact<P, I extends P> = P extends Builtin ? P
+export type Exact<P, I extends P> = P extends Builtin
+  ? P
   : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function isSet(value: any): boolean {
