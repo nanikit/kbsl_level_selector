@@ -1,17 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @font-face {
-  font-family: 'esamanru';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff')
-    format('woff');
+  font-family: "esamanru";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff")
+    format("woff");
 }
 
 @font-face {
-  font-family: 'Maplestory';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff')
-    format('woff');
+  font-family: "Maplestory";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff")
+    format("woff");
 }
 
 body {
@@ -19,52 +17,54 @@ body {
   user-select: none;
 }
 
-@layer utilities {
-  * {
-    --tw-clip-polygon: var(--tw-clip-polygon-a), var(--tw-clip-polygon-b), var(--tw-clip-polygon-c),
-      var(--tw-clip-polygon-d);
-    --tw-clip-polygon-a: 0 0;
-    --tw-clip-polygon-b: 100% 0;
-    --tw-clip-polygon-c: 100% 100%;
-    --tw-clip-polygon-d: 0 100%;
-  }
+* {
+  --tw-clip-polygon:
+    var(--tw-clip-polygon-a), var(--tw-clip-polygon-b), var(--tw-clip-polygon-c),
+    var(--tw-clip-polygon-d);
+  --tw-clip-polygon-a: 0 0;
+  --tw-clip-polygon-b: 100% 0;
+  --tw-clip-polygon-c: 100% 100%;
+  --tw-clip-polygon-d: 0 100%;
+}
 
-  .clip.polygon.a-9 {
-    --tw-clip-polygon-a: 2.25vw 0;
-  }
+.clip.polygon.a-9 {
+  --tw-clip-polygon-a: 2.25vw 0;
+}
 
-  .clip.polygon.b-9 {
-    --tw-clip-polygon-b: calc(100% - 2.25vw) 0;
-  }
+.clip.polygon.b-9 {
+  --tw-clip-polygon-b: calc(100% - 2.25vw) 0;
+}
 
-  .clip.polygon.c-9 {
-    --tw-clip-polygon-c: calc(100% - 2.25vw) 100%;
-  }
+.clip.polygon.c-9 {
+  --tw-clip-polygon-c: calc(100% - 2.25vw) 100%;
+}
 
-  .clip.polygon.d-9 {
-    --tw-clip-polygon-d: 2.25vw 100%;
-  }
+.clip.polygon.d-9 {
+  --tw-clip-polygon-d: 2.25vw 100%;
+}
 
-  .clip.polygon {
-    clip-path: polygon(var(--tw-clip-polygon));
-  }
+.clip.polygon {
+  clip-path: polygon(var(--tw-clip-polygon));
+}
 
-  .text-outshadow {
-    text-shadow: -0.1vw 0.1vw 0.3vw #000, 0.1vw 0.1vw 0.3vw #000, 0.1vw -0.1vw 0 #000,
-      -0.1vw -0.1vw 0 #000;
-  }
+@utility text-outshadow {
+  text-shadow:
+    -0.1vw 0.1vw 0.3vw #000,
+    0.1vw 0.1vw 0.3vw #000,
+    0.1vw -0.1vw 0 #000,
+    -0.1vw -0.1vw 0 #000;
+}
 
-  :root {
-    --cone-color1: hsl(90, 100%, 30%);
-    --cone-color2: hsl(90, 100%, 70%);
-  }
+:root {
+  --cone-color1: hsl(90, 100%, 30%);
+  --cone-color2: hsl(90, 100%, 70%);
+}
 
-  .cone-glow {
-    position: relative;
-  }
+@utility cone-glow {
+  position: relative;
 
-  .cone-glow:before {
-    content: '';
+  &:before {
+    content: "";
     position: absolute;
     left: -50%;
     top: -25vw;
@@ -77,13 +77,13 @@ body {
     width: 200%;
     animation: cone-rotate 1.5s linear infinite forwards;
   }
+}
 
-  @keyframes cone-rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(180deg);
-    }
+@keyframes cone-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
   }
 }
