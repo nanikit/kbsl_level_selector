@@ -1,5 +1,5 @@
-import { atom, useAtom } from 'jotai';
-import { Difficulty } from '../services/beatsaver';
+import { atom, useAtom } from "jotai";
+import { Difficulty } from "../services/beatsaver";
 
 export type OneToOneStatus = {
   player1: string;
@@ -9,7 +9,7 @@ export type OneToOneStatus = {
   tournamentServer: string;
 };
 
-export type MatchMapStatus = 'normal' | 'banned' | 'picked' | 'p1_win' | 'p2_win';
+export type MatchMapStatus = "normal" | "banned" | "picked" | "p1_win" | "p2_win";
 
 export type MatchInformation = {
   title: string;
@@ -22,13 +22,13 @@ export type MatchInformation = {
 };
 
 export type PlaylistCharacteristic =
-  | 'Standard'
-  | 'OneSaber'
-  | 'NoArrows'
-  | '90Degree'
-  | '360Degree'
-  | 'Lightshow'
-  | 'Lawless';
+  | "Standard"
+  | "OneSaber"
+  | "NoArrows"
+  | "90Degree"
+  | "360Degree"
+  | "Lightshow"
+  | "Lawless";
 export type Level = {
   hash: string;
   characteristic?: PlaylistCharacteristic;
@@ -45,7 +45,7 @@ const atomWithLocalStorage = <T>(key: string, initialValue: T) => {
   };
 
   const baseAtom = atom(getInitialValue());
-  const derivedAtom = atom<T, T>(
+  const derivedAtom = atom<T, [T], void>(
     (get) => get(baseAtom),
     (_, set, update) => {
       set(baseAtom, update);
@@ -57,13 +57,13 @@ const atomWithLocalStorage = <T>(key: string, initialValue: T) => {
 };
 
 export const presetCount = 5;
-export const presetIndexAtom = atomWithLocalStorage('presetIndex', 0);
+export const presetIndexAtom = atomWithLocalStorage("presetIndex", 0);
 
 const matchInformationAtoms = [...Array(presetCount).keys()].map((i) =>
   atomWithLocalStorage(`match${i + 1}`, {
-    title: '',
-    host: '',
-    description: '',
+    title: "",
+    host: "",
+    description: "",
     titles: [],
     levels: [],
     matchResult: [],
@@ -79,11 +79,11 @@ const matchInformationAtom = atom(
 
 const oneToOneAtoms = [...Array(presetCount).keys()].map((i) =>
   atomWithLocalStorage<OneToOneStatus>(`oneToOneStatus${i}`, {
-    player1: '',
-    player2: '',
+    player1: "",
+    player2: "",
     hasPlayer1Retry: true,
     hasPlayer2Retry: true,
-    tournamentServer: '',
+    tournamentServer: "",
   }),
 );
 
@@ -102,8 +102,8 @@ export function getMatchFromPlaylist(data: unknown): Partial<MatchInformation> {
     difficulty: x.difficulties?.[0]?.name,
   })) as Level[];
   const matchUpdate = {
-    host: '한국 비트세이버 커뮤니티',
-    title: '',
+    host: "한국 비트세이버 커뮤니티",
+    title: "",
     description: playlist?.playlistDescription,
     titles: playlist?.songs?.map?.((x: any) => x.songName),
     levels,
